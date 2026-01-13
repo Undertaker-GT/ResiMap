@@ -1,0 +1,894 @@
+/* Reemplaza la regla actual del body y #map */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Evita scrollbars innecesarios */
+}
+#map {
+  position: fixed; /* mejor que absolute para mapas fullscreen */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  cursor: pointer;
+}
+
+h2 {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.input-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#sectorInput {
+  padding: 8px;
+  width: 200px;
+}
+
+button {
+  padding: 8px 12px;
+  margin-left: 5px;
+}
+    #sectorSelect option[disabled] {
+      color: #999;
+      display: none; /* Oculta el placeholder en la lista desplegable */
+    }
+
+.sector-info {
+  min-width: 200px;
+}
+
+.sector-info h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.sector-info p {
+  margin: 8px 0;
+}
+
+.route-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.route-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Estilo para el popup de Leaflet */
+.leaflet-popup-content {
+  margin: 10px;
+}
+/* Estilos para los sectores (solo borde) */
+.sector-polygon {
+  pointer-events: auto !important; /* Asegurar interactividad */
+}
+
+/* Popups */
+.sector-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  border: 1px solid #e4f3e6;
+}
+
+.sector-popup .leaflet-popup-tip {
+  background: #3388ff;
+}
+
+/* Mejorar visibilidad en móviles */
+@media (max-width: 768px) {
+  .sector-info {
+    min-width: 180px;
+    font-size: 14px;
+  }
+  
+  .route-btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .leaflet-popup-content {
+    margin: 8px;
+  }
+}
+
+.sector-highlighted {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    stroke-width: 2px;
+    stroke-opacity: 0.7;
+  }
+  50% {
+    stroke-width: 3px;
+    stroke-opacity: 1;
+  }
+  100% {
+    stroke-width: 2px;
+    stroke-opacity: 0.7;
+  }
+}
+
+/* Agrega esto al final de tu CSS */
+.user-location-marker {
+  background: none !important;
+  border: none !important;
+}
+
+/* Estilo para el botón de ubicación si decides usar el control de Leaflet */
+.leaflet-control-locate a {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+}
+
+/* Agrega al final del archivo: */
+
+/* Estilos para el botón de ubicación */
+.leaflet-control-locate a {
+  background-color: white;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBzdHlsZT0iZmlsbDogIzMzODhmZjsiPjxwYXRoIGQ9Ik04IDFDNC4xNCAxIDEgNC4xNCAxIDhjMCAzLjg2IDMuMTQgNyA3IDdzNy0zLjE0IDctNy0zLjE0LTctNy03em0wIDEyLjVjLTIuNzYgMC01LTIuMjQtNS01czIuMjQtNSA1LTUgNSAyLjI0IDUgNS0yLjI0IDUtNSA1em0wLTguNWMtMS45MyAwLTMuNSAxLjU3LTMuNSAzLjVTNi4wNyAxMiA4IDEyczMuNS0xLjU3IDMuNS0zLjVTOS45MyA1IDggNXoiLz48L3N2Zz4=');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.leaflet-control-locate a:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.05);
+}
+
+.leaflet-control-locate.active a {
+  background-color: #e3f2fd;
+  box-shadow: 0 1px 7px rgba(0,0,0,0.6);
+}
+
+.leaflet-control-locate.requesting a {
+  animation: pulse-locate 1.5s infinite;
+}
+
+@keyframes pulse-locate {
+  0% {
+    background-color: white;
+  }
+  50% {
+    background-color: #e3f2fd;
+  }
+  100% {
+    background-color: white;
+  }
+}
+
+/* Mejorar visibilidad del popup de ubicación */
+.leaflet-popup-content .leaflet-locate-popup {
+  font-size: 14px;
+  font-weight: bold;
+  color: #3388ff;
+}
+
+/* Asegurar que el marcador de usuario sea visible */
+.user-location-marker {
+  z-index: 1000 !important;
+}
+
+/* Estilo para dispositivos móviles */
+@media (max-width: 768px) {
+  .leaflet-control-locate a {
+    width: 36px;
+    height: 36px;
+  }
+
+}
+
+/* Estilo para el botón de ubicación personalizado */
+.location-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #3388ff;
+  font-weight: bold;
+  margin-left: 5px;
+  transition: all 0.3s ease;
+}
+
+.location-btn:hover {
+  background-color: #e3f2fd;
+  border-color: #3388ff;
+  transform: translateY(-2px);
+}
+
+.location-btn:active {
+  background-color: #bbdefb;
+}
+
+
+/* Estilo para el logo --------------------------------------------------------------------------------------------------------------------*/
+.residential-logo {
+  position: fixed;
+  top: 15px;
+  right: 150px;   /* SIEMPRE visible */
+  z-index: 2000;
+  width: clamp(120px, 20vw, 300px); /* se adapta al tamaño de pantalla */
+}
+
+.residential-logo img {
+  width: 100%;
+  height: auto;
+}
+
+
+/* Para móviles */
+@media (max-width: 768px) {
+  .residential-logo {
+    top: 10px;
+    right: 140px;
+    width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .residential-logo {
+    width: 100px;
+  }
+}
+.leaflet-top.leaflet-right {
+  margin-top: 80px;
+}
+
+
+/* Asegurar que no interfiera con otros controles */
+.leaflet-top.leaflet-right {
+    margin-top: 80px; /* Espacio para el logo */
+}
+
+@media (max-width: 768px) {
+    .leaflet-top.leaflet-right {
+        margin-top: 70px;
+    }
+}
+
+
+/* Botón flotante de búsqueda ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.floating-search-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3388ff, #2c3e50);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.floating-search-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #2c3e50, #3388ff);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 15px rgba(51, 136, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(51, 136, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 15px rgba(51, 136, 255, 0.5);
+  }
+}
+
+/* Modal de búsqueda */
+.search-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.search-modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.search-modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.search-modal-header {
+  background: linear-gradient(135deg, #3388ff, #2c3e50);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-modal-header h3 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.close-modal:hover {
+  transform: scale(1.2);
+}
+
+.search-input-container {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box i {
+  position: absolute;
+  left: 15px;
+  color: #666;
+  font-size: 18px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 15px 50px 15px 45px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #3388ff;
+}
+
+.clear-search {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.clear-search:hover {
+  color: #ff3333;
+}
+
+.sector-list-container {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.sector-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.sector-item {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 15px 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sector-item:hover {
+  background: #3388ff;
+  color: white;
+  border-color: #3388ff;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(51, 136, 255, 0.3);
+}
+
+.sector-item.selected {
+  background: #2c3e50;
+  color: white;
+  border-color: #2c3e50;
+}
+
+.sector-number {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.sector-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.no-results i {
+  font-size: 48px;
+  margin-bottom: 15px;
+  color: #ddd;
+}
+
+.no-results p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+  padding: 12px 25px;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  color: #666;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.current-location-btn {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #3388ff, #2c3e50);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.current-location-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(51, 136, 255, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .floating-search-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .search-modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .sector-list {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+}
+
+/* Botón flotante de Mi Ubicación */
+.floating-location-btn {
+  position: fixed;
+  bottom: 110px; /* un poco arriba del botón buscar */
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: #1e88e5;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-size: 22px;
+  z-index: 1000;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.floating-location-btn:hover {
+  background-color: #1565c0;
+  transform: scale(1.1);
+}
+
+.floating-location-btn:active {
+  transform: scale(0.95);
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(30,136,229,0.6); }
+  70% { box-shadow: 0 0 0 15px rgba(30,136,229,0); }
+  100% { box-shadow: 0 0 0 0 rgba(30,136,229,0); }
+}
+
+.floating-location-btn.active {
+  animation: pulse 1.5s infinite;
+}
+
+/* REEMPLAZA las reglas existentes y AÑADE estas */
+
+/* 1. RESET RESPONSIVE */
+* {
+  box-sizing: border-box;
+}
+
+/* 2. ESTRUCTURA PRINCIPAL */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* 4. BOTONES FLOTANTES - AJUSTE PARA DIFERENTES PANTALLAS */
+.floating-search-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  z-index: 1000;
+  font-size: 22px;
+}
+
+.floating-location-btn {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  font-size: 22px;
+}
+
+/* 5. MODAL DE BÚSQUEDA - MEJORAS RESPONSIVE */
+.search-modal-content {
+  width: 95%;
+  max-width: 500px;
+  max-height: 85vh;
+  margin: 5vh auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sector-list-container {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 40vh;
+}
+
+/* 6. CONTROLES DEL MAPA - AJUSTES */
+.leaflet-control {
+  margin-top: 70px !important; /* Espacio para el logo */
+}
+
+.leaflet-control-locate {
+  margin-top: 110px !important; /* Más espacio para el logo */
+}
+
+/* 7. MEDIA QUERIES ESPECÍFICAS */
+
+/* Tabletas */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .residential-logo {
+    max-width: 250px;
+    top: 15px;
+  }
+  
+  .floating-search-btn,
+  .floating-location-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  
+  .floating-location-btn {
+    bottom: 95px;
+  }
+  
+  .search-modal-content {
+    max-width: 600px;
+  }
+}
+
+/* Teléfonos grandes */
+@media (max-width: 767px) {
+  .residential-logo {
+    max-width: 200px;
+    width: 70vw;
+    top: 8px;
+  }
+  
+  .floating-search-btn {
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .floating-location-btn {
+    bottom: 80px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  /* Ajustar controles del mapa */
+  .leaflet-control-zoom {
+    margin-top: 60px !important;
+  }
+  
+  .leaflet-control-layers {
+    margin-top: 100px !important;
+  }
+  
+  /* Modal más compacto */
+  .search-modal-content {
+    margin: 2vh auto;
+    max-height: 90vh;
+  }
+  
+  .sector-list {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .sector-item {
+    padding: 12px 5px;
+    font-size: 14px;
+  }
+}
+
+/* Teléfonos muy pequeños */
+@media (max-width: 480px) {
+  .residential-logo {
+    max-width: 150px;
+    width: 80vw;
+    top: 5px;
+  }
+  
+  .residential-logo img {
+    max-height: 40px;
+  }
+  
+  .floating-search-btn,
+  .floating-location-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .floating-location-btn {
+    bottom: 65px;
+  }
+  
+  .search-modal-header h3 {
+    font-size: 1.2em;
+  }
+  
+  .search-box input {
+    padding: 12px 40px 12px 35px;
+    font-size: 14px;
+  }
+  
+  .sector-list {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 6px;
+  }
+  
+  .sector-number {
+    font-size: 20px;
+  }
+}
+
+/* Pantallas muy grandes */
+@media (min-width: 1400px) {
+  .residential-logo {
+    max-width: 350px;
+    top: 20px;
+  }
+  
+  .floating-search-btn,
+  .floating-location-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 26px;
+    bottom: 30px;
+    right: 30px;
+  }
+  
+  .floating-location-btn {
+    bottom: 110px;
+  }
+}
+
+/* 8. ORIENTACIÓN HORIZONTAL */
+@media (max-height: 500px) and (orientation: landscape) {
+  .residential-logo {
+    max-width: 150px;
+    top: 5px;
+  }
+  
+  .search-modal-content {
+    max-height: 95vh;
+    max-width: 90vw;
+  }
+  
+  .sector-list-container {
+    max-height: 50vh;
+  }
+}
+
+/* 9. MEJORAS DE ACCESIBILIDAD TÁCTIL */
+@media (hover: none) and (pointer: coarse) {
+  .sector-item {
+    min-height: 44px; /* Tamaño mínimo para toques */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .floating-search-btn,
+  .floating-location-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* 10. AJUSTE PARA iPAD PRO Y SIMILARES */
+@media (width: 1024px) and (height: 1366px) {
+  .residential-logo {
+    max-width: 280px;
+  }
+  
+  .floating-search-btn,
+  .floating-location-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 26px;
+  }
+}
+
+
+/* ================================
+   INPUT NÚMERO DE CASA
+================================ */
+
+.house-input-container {
+  background: linear-gradient(135deg, #afc3e0, #2c3e50);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.house-input-container label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.house-input-container input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #dcdcdc;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s ease;
+  background-color: #fafafa;
+}
+
+/* Foco */
+.house-input-container input:focus {
+  border-color: #00c853;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 200, 83, 0.15);
+}
+
+/* Placeholder */
+.house-input-container input::placeholder {
+  color: #999;
+  font-size: 13px;
+}

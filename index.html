@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mapa GPS de la Residencial</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <link rel="stylesheet" href="CSS/estilo.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="margin: 0; padding: 0; overflow: hidden;">
+  <!-- Logo en la esquina superior derecha -->
+  <div class="residential-logo">
+    <img src="/image/logo gps.png" alt="Logo GPS Residencial" title="Residencial GPS">
+  </div>
+
+  <!-- Botón de búsqueda flotante -->
+  <button class="floating-search-btn" onclick="toggleSearchModal()" title="Buscar sector">
+    <i class="fas fa-search"></i>
+  </button>
+
+  <!-- Modal de búsqueda -->
+  <div id="searchModal" class="search-modal">
+    <div class="search-modal-content">
+      <div class="search-modal-header">
+        <h3>Buscar Residencia</h3>
+        <button class="close-modal" onclick="toggleSearchModal()">&times;</button>
+      </div>
+      
+            <div class="house-input-container">
+    <input 
+      type="number"
+      id="houseNumber"
+      placeholder="Ingrese el numero de casa (opcional)"
+    >
+  </div>
+
+      <div class="search-input-container">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text"
+            id="searchSectorInput"
+            placeholder="Ej: 14, 014 o Sector 14"
+            oninput="filterSectors()"
+            autocomplete="off"
+          >
+          <button class="clear-search" onclick="clearSearch()" title="Limpiar búsqueda">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+
+
+      <div class="sector-list-container">
+        <div class="sector-list" id="sectorList">
+          <!-- Los sectores se cargarán dinámicamente desde JavaScript -->
+        </div>
+        <div class="no-results" id="noResults" style="display: none;">
+          <i class="fas fa-search"></i>
+          <p>No se encontraron sectores con ese número</p>
+        </div>
+      </div>
+
+      
+
+      <div class="modal-footer">
+        <button class="cancel-btn" onclick="toggleSearchModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+      <!-- Botón flotante de Mi Ubicación -->
+    <button class="floating-location-btn" onclick="centrarEnUsuario()" title="Mi ubicación">
+      <i class="fas fa-location-crosshairs"></i>
+    </button>
+
+  <!-- Select oculto para mantener compatibilidad -->
+  <select id="sectorSelect" style="display: none;">
+    <!-- Las opciones se cargarán dinámicamente -->
+  </select>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+  <script src="JS/script.js"></script>
+</body>
+</html>
