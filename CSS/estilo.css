@@ -590,8 +590,6 @@ button {
   animation: pulse 1.5s infinite;
 }
 
-/* REEMPLAZA las reglas existentes y AÑADE estas */
-
 /* 1. RESET RESPONSIVE */
 * {
   box-sizing: border-box;
@@ -891,4 +889,231 @@ html, body {
 .house-input-container input::placeholder {
   color: #999;
   font-size: 13px;
+}
+
+/* ===============================
+   MODAL INFO SECTOR
+================================ */
+.sector-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.sector-modal.active {
+  display: flex;
+}
+
+.sector-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 360px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: modalFadeIn 0.25s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sector-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #2563eb;
+  color: white;
+}
+
+.sector-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-sector-modal {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.sector-modal-body {
+  padding: 16px;
+}
+
+.sector-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  margin-bottom: 14px;
+  color: #333;
+}
+
+.sector-stat i {
+  color: #2563eb;
+}
+
+.sector-house-input label {
+  display: block;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.sector-house-input input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.sector-modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 16px;
+  border-top: 1px solid #eee;
+}
+
+.btn-primary {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #1e4ed8;
+}
+
+.btn-secondary {
+  flex: 1;
+  background: #f1f5f9;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+/* ===============================
+   Puntos de interes
+================================ */
+/* ===== PIN DE SECTOR ===== */
+.sector-marker {
+  background: transparent;
+  border: none;
+}
+
+.sector-pin {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* punta del pin */
+.sector-pin::after {
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #1e40af;
+}
+
+/* efecto hover */
+.sector-pin:hover {
+  transform: scale(1.1);
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+/* ===== ESTADOS DEL PIN ===== */
+
+/* Normal (por defecto) */
+.sector-pin {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.sector-pin::after {
+  border-top-color: #1e40af;
+}
+
+/* 🟢 Sector activo */
+.sector-pin.active {
+  background: linear-gradient(135deg, #16a34a, #166534);
+}
+
+.sector-pin.active::after {
+  border-top-color: #166534;
+}
+
+/* 🔴 Error */
+.sector-pin.error {
+  background: linear-gradient(135deg, #dc2626, #7f1d1d);
+}
+
+.sector-pin.error::after {
+  border-top-color: #7f1d1d;
+}
+
+
+/* ===== BOTÓN CANCELAR RUTA ===== */
+.floating-cancel-route-btn {
+  position: fixed;
+  bottom: 192px; /* un poco arriba del botón buscar */
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: #da1616;
+  color: #fff;
+  border: none;
+  display: none; /* oculto por defecto */
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-size: 22px;
+  z-index: 1000;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+
+.floating-cancel-route-btn:hover {
+  background: #b91c1c;
+  transform: scale(1.08);
 }

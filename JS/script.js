@@ -5,6 +5,9 @@ const ROUTE_UPDATE_DISTANCE = 10; // metros esto lo puedo ajustar segun vea comv
 let autoFollow = true;   // seguimiento activo
 let userInteracting = false;
 
+let sectorModalActivo = null;
+
+
 let map;
 let routingControl;
 let userLocation = null;
@@ -904,6 +907,111 @@ const sectores = {
   },
 }
 
+const sectorMarkers = {}; // marker Leaflet
+const sectorPins = {};    // div HTML del pin
+let activeSectorPolygon = null;
+
+Object.keys(sectores).forEach(sectorId => {
+  const sector = sectores[sectorId];
+
+  const icon = L.divIcon({
+    className: "sector-marker",
+    html: `<div class="sector-pin" id="sector-pin-${sectorId}">${sectorId}</div>`
+  });
+
+  const marker = L.marker(sector.coords, { icon }).addTo(map);
+
+  marker.on("click", () => {
+    activarSector(sectorId);
+    abrirModalSector(sectorId);
+  });
+
+  sectorMarkers[sectorId] = marker;
+  sectorPins[sectorId] = `sector-pin-${sectorId}`;
+});
+
+function limpiarEstadoPines() {
+  Object.values(sectorPins).forEach(pinId => {
+    const pin = document.getElementById(pinId);
+    if (pin) {
+      pin.classList.remove("active", "error");
+    }
+  });
+}
+
+
+function abrirModalSector(sectorId) {
+  const sector = sectores[sectorId];
+
+  sectorModalActivo = sectorId;
+
+  document.getElementById("sectorModalTitle").textContent = sector.name;
+  document.getElementById("sectorTotalCasas").textContent =
+    `${Object.keys(sector.casas || {}).length} casas`;
+
+  document.getElementById("sectorHouseInput").value = "";
+
+  document.getElementById("sectorInfoModal").classList.add("active");
+}
+
+function cerrarModalSector() {
+  document.getElementById("sectorInfoModal").classList.remove("active");
+  sectorModalActivo = null;
+}
+
+function confirmarSectorRuta() {
+  if (!sectorModalActivo) return;
+
+  if (!userLocation) {
+    alert("Esperando ubicación actual...");
+    return;
+  }
+
+  const sectorId = sectorModalActivo;
+  const houseInput = document.getElementById("sectorHouseInput").value;
+
+  cerrarModalSector();
+
+  // Pasar casa al input global (reutilizamos lógica existente)
+  document.getElementById("houseNumber").value = houseInput || "";
+
+  // 🔥 ACTIVAR SECTOR (polígono)
+  activarSector(sectorId);
+
+  // 🧭 TRAZAR RUTA (esto era lo que faltaba)
+  trazarRutaASector(sectorId);
+}
+
+function activarSector(sectorId) {
+  limpiarEstadoPines();
+
+  const pin = document.getElementById(sectorPins[sectorId]);
+  if (pin) {
+    pin.classList.add("active"); // 🟢
+  }
+
+  const sector = sectores[sectorId];
+
+  // 🔥 Quitar polígono anterior
+  if (activeSectorPolygon) {
+    map.removeLayer(activeSectorPolygon);
+    activeSectorPolygon = null;
+  }
+
+  // 🟢 Crear SOLO este polígono
+  activeSectorPolygon = L.polygon(sector.area, {
+    color: "#2563eb",
+    weight: 2,
+    fillOpacity: 0.25,
+    interactive: false // importante
+  }).addTo(map);
+
+  map.fitBounds(activeSectorPolygon.getBounds());
+
+  trazarRutaASector(sectorId);
+}
+
+
 // Localizar usuario sin cambiar la vista
 map.locate({ 
   setView: false,
@@ -968,112 +1076,13 @@ map.on('locationfound', function (e) {
     duration: 0.5
   });
   }
+
 });
 
 map.on('locationerror', function () {
   alert("No se pudo obtener tu ubicación");
 });
 
-
-// Crear capas de polígonos para todos los sectores
-const sectorLayers = {};
-
-Object.keys(sectores).forEach(sectorId => {
-  const sector = sectores[sectorId];
-  
-  if (sector.area) {
-    // Crear polígono para el sector
-    const polygon = L.polygon(sector.area, {
-      color: "#e4f3e6",
-      fillColor: "transparent",
-      fillOpacity: 0,
-      weight: 2,
-      interactive: true,
-      className: `sector-polygon sector-${sectorId}`
-    }).addTo(map);
-    
-    // Variables para controlar el estado del popup
-    let popupTimeout;
-    let isPopupOpen = false;
-    const popupCloseDelay = 100; // Milisegundos antes de cerrar
-    
-    // Crear contenido del popup
-    const popupContent = `
-      <div class="sector-info">
-        <h3>${sector.name}</h3>
-        <p><strong>Total de casas:</strong> ${sector.n_casas || 'No disponible'}</p>
-        ${sector.comercios ? `<p><strong>Comercios:</strong> ${sector.comercios.join(', ')}</p>` : ''}
-        <button class="route-btn" data-sector="${sectorId}">Trazar ruta</button>
-      </div>
-    `;
-    
-    // Configurar popup
-    polygon.bindPopup(popupContent, {
-      closeButton: true,
-      autoClose: false, // Desactivamos el cierre automático
-      closeOnClick: false,
-      className: 'sector-popup',
-      maxWidth: 300
-    });
-    
-    // Eventos para desktop
-    if (window.innerWidth > 768) {
-      polygon.on('mouseover', function() {
-        clearTimeout(popupTimeout);
-        this.setStyle({
-          weight: 3,
-          color: "#e4f3e6"
-        });
-        if (!isPopupOpen) {
-          this.openPopup();
-          isPopupOpen = true;
-        }
-      });
-      
-      polygon.on('mouseout', function() {
-        // Solo cerrar si el mouse no está sobre el popup
-        if (!this._popup._container.matches(':hover')) {
-          popupTimeout = setTimeout(() => {
-            this.closePopup();
-            isPopupOpen = false;
-            this.setStyle({
-              weight: 2,
-              color: "#e4f3e6"
-            });
-          }, popupCloseDelay);
-        }
-      });
-      
-      // Manejar cuando el mouse entra/sale del popup
-      polygon.on('popupopen', function() {
-        const popup = this._popup._container;
-        popup.addEventListener('mouseenter', () => clearTimeout(popupTimeout));
-        popup.addEventListener('mouseleave', () => {
-          popupTimeout = setTimeout(() => {
-            this.closePopup();
-            isPopupOpen = false;
-            this.setStyle({
-              weight: 2,
-              color: "#e4f3e6"
-            });
-          }, popupCloseDelay);
-        });
-      });
-    }
-    
-    // Eventos para móviles
-    polygon.on('click', function(e) {
-      if (window.innerWidth <= 768) {
-        Object.values(sectorLayers).forEach(layer => {
-          if (layer !== this) layer.closePopup();
-        });
-        this.openPopup(e.latlng);
-      }
-    });
-    
-    sectorLayers[sectorId] = polygon;
-  }
-});
 
 function mostrarInfoSector(sectorKey) {
   const sector = sectores[sectorKey];
@@ -1156,10 +1165,6 @@ function buscarSector() {
 }
 
 // Agregar todos los polígonos al mapa (pero ocultos inicialmente)
-const overlayLayers = {};
-Object.keys(sectorLayers).forEach(sectorId => {
-  overlayLayers[sectores[sectorId].name] = sectorLayers[sectorId];
-});
 
 routingControl.on('routingerror', function(err) {
   alert("No se pudo calcular la ruta. Intenta más tarde.");
@@ -1352,8 +1357,8 @@ function filterSectors() {
     item.textContent = sector.name;
 
     item.onclick = () => {
-      toggleSearchModal(); // 🔍 SOLO AQUÍ
-      trazarRutaASector(sectorKey);
+      toggleSearchModal();
+      activarSector(sectorKey);
     };
 
     sectorList.appendChild(item);
@@ -1364,6 +1369,26 @@ function filterSectors() {
 
 function trazarRutaASector(sectorKey) {
   const sector = sectores[sectorKey];
+
+   if (!sector || !userLocation) {
+    const pin = document.getElementById(sectorPins[sectorKey]);
+    if (pin) {
+      pin.classList.add("error"); // 🔴
+    }
+    alert("Datos incompletos");
+    return;
+  }
+
+   if (routingControl) {
+    map.removeControl(routingControl);
+    routingControl = null;
+
+    // 👀 volver a mostrar todos los pines
+    mostrarTodosLosPines();
+  }
+
+  limpiarEstadoPines();
+
   const houseNumber = document.getElementById("houseNumber")?.value;
 
   if (!sector || !userLocation) {
@@ -1398,6 +1423,11 @@ function trazarRutaASector(sectorKey) {
       serviceUrl: "https://router.project-osrm.org/route/v1"
     })
   }).addTo(map);
+
+  ocultarPinesExcepto(sectorKey);
+
+  // 👁 mostrar botón cancelar
+  document.getElementById("cancelRouteBtn").style.display = "flex";
 
   map.setView(destinoCoords, 18);
 
@@ -1480,6 +1510,46 @@ function normalizarEntradaSector(texto) {
   // Quitar ceros a la izquierda (014 → 14)
   return numero[0].replace(/^0+/, "") || "0";
 }
+
+function ocultarPinesExcepto(sectorIdActivo) {
+  Object.keys(sectorMarkers).forEach(sectorId => {
+    if (sectorId !== sectorIdActivo) {
+      map.removeLayer(sectorMarkers[sectorId]);
+    }
+  });
+}
+
+function mostrarTodosLosPines() {
+  Object.values(sectorMarkers).forEach(marker => {
+    if (!map.hasLayer(marker)) {
+      marker.addTo(map);
+    }
+  });
+}
+
+function cancelarRuta() {
+  if (routingControl) {
+    map.removeControl(routingControl);
+    routingControl = null;
+  }
+
+  destinationLatLng = null;
+  lastRouteUpdateLocation = null;
+
+  limpiarEstadoPines();
+  mostrarTodosLosPines();
+  ocultarPoligonoSector(); 
+
+  document.getElementById("cancelRouteBtn").style.display = "none";
+}
+
+function ocultarPoligonoSector() {
+  if (activeSectorPolygon) {
+    map.removeLayer(activeSectorPolygon);
+    activeSectorPolygon = null;
+  }
+}
+
 document.querySelector('.floating-location-btn')
   .classList.add('active');
 
