@@ -1,6 +1,9 @@
 let userMarker = null;
 let destinationLatLng = null; // guardamos el destino actual
-
+let lastRouteUpdateLocation = null;
+const ROUTE_UPDATE_DISTANCE = 10; // metros esto lo puedo ajustar segun vea comveniente comenzare con 10
+let autoFollow = true;   // seguimiento activo
+let userInteracting = false;
 
 let map;
 let routingControl;
@@ -911,24 +914,59 @@ map.locate({
 map.on('locationfound', function (e) {
   userLocation = e.latlng;
 
-  // Crear o mover marcador del usuario
+  // Crear o mover marcador
   if (!userMarker) {
     userMarker = L.marker(userLocation, {
       icon: L.divIcon({
-        html: '<div style="background:#3388ff;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 0 5px rgba(0,0,0,0.5);"></div>',
+        html: '<div style="background:#3388ff;width:12px;height:12px;border-radius:50%;border:2px solid white;"></div>',
         iconSize: [16, 16]
       })
-    }).addTo(map).bindPopup("Tu ubicación");
+    }).addTo(map);
   } else {
     userMarker.setLatLng(userLocation);
   }
 
-  // 🔁 Actualizar ruta si ya hay un destino
-  if (routingControl && destinationLatLng) {
+  // ⛔ Si no hay ruta activa, salir
+  if (!routingControl || !destinationLatLng) return;
+
+  // Primera vez
+  if (!lastRouteUpdateLocation) {
+    lastRouteUpdateLocation = userLocation;
+    return;
+  }
+
+  // 📏 Distancia desde última actualización
+  const distanceMoved = userLocation.distanceTo(lastRouteUpdateLocation);
+
+  // 🚫 Ignorar ruido del GPS (IMPORTANTE)
+  if (distanceMoved < 3) return;
+
+  // GPS estable
+  if (distanceMoved < 2) return;
+
+  // Ciudad con señal mala
+  if (distanceMoved < 4) return;
+
+  // Teléfonos viejos
+  if (distanceMoved < 5) return;
+
+  // 🔁 Actualizar solo si superó X metros
+  if (distanceMoved >= ROUTE_UPDATE_DISTANCE) {
     routingControl.setWaypoints([
       L.latLng(userLocation.lat, userLocation.lng),
       destinationLatLng
     ]);
+
+    lastRouteUpdateLocation = userLocation;
+
+    console.log(`Ruta actualizada (${distanceMoved.toFixed(1)} m)`);
+  }
+
+  if (autoFollow && !userInteracting) {
+  map.setView(userLocation, map.getZoom(), {
+    animate: true,
+    duration: 0.5
+  });
   }
 });
 
@@ -1189,25 +1227,27 @@ map.on('locate', function(e) {
   }
 });
 
+map.on("dragstart zoomstart", () => {
+  userInteracting = true;
+  autoFollow = false;
+});
+
 // boton para fijar al usuario
 function centrarEnUsuario() {
   if (!userLocation) {
-    alert("Obteniendo tu ubicación... Por favor espera.");
-    map.locate({setView: true, maxZoom: 17});
+    map.locate({ setView: true, maxZoom: 17 });
     return;
   }
-  
-  // Centrar en la ubicación del usuario
-  map.setView(userLocation, 17);
-  
-  // Resaltar la ubicación con un popup
-  L.popup()
-    .setLatLng(userLocation)
-    .setContent("Tu ubicación actual")
-    .openOn(map);
+
+  autoFollow = true;
+  userInteracting = false;
+
+  map.setView(userLocation, 17, {
+    animate: true
+  });
 }
 
-// También puedes agregar un atajo de teclado
+// atajo del teclado
 document.addEventListener('keydown', function(e) {
   // Ctrl + L para centrar en ubicación
   if (e.ctrlKey && e.key === 'l') {
@@ -1346,6 +1386,7 @@ function trazarRutaASector(sectorKey) {
   }
 
   destinationLatLng = L.latLng(destinoCoords[0], destinoCoords[1]);
+  lastRouteUpdateLocation = null;
 
   routingControl = L.Routing.control({
     waypoints: [
@@ -1365,7 +1406,6 @@ function trazarRutaASector(sectorKey) {
     .setContent(popupTexto)
     .openOn(map);
 }
-
 
 
 
