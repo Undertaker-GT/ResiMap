@@ -1582,14 +1582,14 @@ function actualizarEstiloPinesPorZoom() {
     const pin = document.getElementById(pinId);
     if (!pin) return;
 
-    // Ocultar en zoom lejano
     if (zoom <= 14) {
-      pin.style.display = "none";
-      return;
-    } else {
-      pin.style.display = "flex";
-    }
+    pin.style.display = "none";
+  } else {
+    pin.style.display = "flex";
+  }
 
+
+    // Limpiar estados previos
     pin.classList.remove("zoom-far", "zoom-mid", "zoom-near");
 
     if (zoom <= 15) {
@@ -1599,14 +1599,8 @@ function actualizarEstiloPinesPorZoom() {
     } else {
       pin.classList.add("zoom-near");
     }
-
-    // ❌ NO animar mientras se mueve
-    if (mapaEnMovimiento) {
-      pin.classList.remove("animate-in");
-    }
   });
 }
-
 function animarPinesVisibles() {
   Object.values(sectorPins).forEach(pinId => {
     const pin = document.getElementById(pinId);

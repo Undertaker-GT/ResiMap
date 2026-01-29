@@ -1110,23 +1110,6 @@ html, body {
   transform: scale(1.15);
 }
 
-/* Animación suave al estabilizar el mapa */
-@keyframes pinFadeIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Solo se anima cuando esta clase está activa */
-.sector-pin.animate-in {
-  animation: pinFadeIn 0.25s ease-out;
-}
-
 
 
 
