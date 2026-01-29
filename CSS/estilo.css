@@ -224,47 +224,63 @@ button {
 /* Estilo para el logo --------------------------------------------------------------------------------------------------------------------*/
 .residential-logo {
   position: fixed;
-  top: 15px;
-  right: 150px;   /* SIEMPRE visible */
-  z-index: 2000;
-  width: clamp(120px, 20vw, 300px); /* se adapta al tamaño de pantalla */
-}
+  top: 16px;
+  right: 16px;
 
+  z-index: 2000;
+
+  width: min(240px, 35vw); /* 🔥 mejor que clamp aquí */
+  max-width: 240px;
+  min-width: 120px;
+
+  opacity: 0.85;
+  pointer-events: none; /* no estorba el mapa */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .residential-logo img {
   width: 100%;
   height: auto;
+  object-fit: contain; /* 🔥 evita deformación */
+  aspect-ratio: auto; /* protege proporción */
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
 }
-
-
-/* Para móviles */
 @media (max-width: 768px) {
   .residential-logo {
-    top: 10px;
-    right: 140px;
-    width: 120px;
+    top: 12px;
+    right: 12px;
+    width: min(180px, 45vw);
+    opacity: 0.8;
   }
 }
-
 @media (max-width: 480px) {
   .residential-logo {
-    width: 100px;
+    top: 10px;
+    right: 10px;
+    width: min(150px, 55vw);
+    opacity: 0.75;
   }
 }
 .leaflet-top.leaflet-right {
-  margin-top: 80px;
+  margin-top: 70px;
+}
+.residential-logo {
+  animation: logoFadeIn 0.4s ease-out;
 }
 
-
-/* Asegurar que no interfiera con otros controles */
-.leaflet-top.leaflet-right {
-    margin-top: 80px; /* Espacio para el logo */
+@keyframes logoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
 }
 
-@media (max-width: 768px) {
-    .leaflet-top.leaflet-right {
-        margin-top: 70px;
-    }
-}
 
 
 /* Botón flotante de búsqueda ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -1018,50 +1034,101 @@ html, body {
 .btn-secondary:hover {
   background: #e2e8f0;
 }
-/* ===============================
-   Puntos de interes
-================================ */
-/* ===== PIN DE SECTOR ===== */
+/* ===== PIN DE SECTOR (DISCRETO) ===== */
 .sector-marker {
   background: transparent;
   border: none;
 }
 
 .sector-pin {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  color: #fff;
-  font-weight: bold;
-  font-size: 14px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+
+  background: rgba(37, 99, 235, 0.65); /* azul suave */
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 600;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #fff;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+
+  box-shadow: none; /* 🔥 clave para que no canse */
+  opacity: 0.75;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background-color 0.2s ease;
 }
 
-/* punta del pin */
-.sector-pin::after {
-  position: absolute;
-  bottom: -9px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 10px solid #1e40af;
-}
-
-/* efecto hover */
+/* Hover: se aclara y crece */
 .sector-pin:hover {
-  transform: scale(1.1);
-  transition: 0.2s ease;
+  opacity: 1;
+  transform: scale(1.15);
+  background: #2563eb;
   cursor: pointer;
 }
+
+/* ===== ESTADOS POR ZOOM ===== */
+
+/* Zoom lejano: ultra discreto */
+.sector-pin.zoom-far {
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  opacity: 0.4;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Zoom medio: balanceado */
+.sector-pin.zoom-mid {
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  opacity: 0.7;
+  background: rgba(37, 99, 235, 0.65);
+}
+
+/* Zoom cercano: claro y usable */
+.sector-pin.zoom-near {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  opacity: 1;
+  background: #2563eb;
+}
+
+/* Mantener prioridad para estados importantes */
+.sector-pin.active,
+.sector-pin.error {
+  opacity: 1 !important;
+  transform: scale(1.15);
+}
+
+/* Animación suave al estabilizar el mapa */
+@keyframes pinFadeIn {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Solo se anima cuando esta clase está activa */
+.sector-pin.animate-in {
+  animation: pinFadeIn 0.25s ease-out;
+}
+
+
+
 
 /* ===== ESTADOS DEL PIN ===== */
 
@@ -1093,27 +1160,49 @@ html, body {
 }
 
 
-/* ===== BOTÓN CANCELAR RUTA ===== */
+/* ===== BOTÓN CANCELAR RUTA (RESPONSIVE) ===== */
 .floating-cancel-route-btn {
   position: fixed;
-  bottom: 192px; /* un poco arriba del botón buscar */
-  right: 20px;
-  width: 55px;
-  height: 55px;
+
+  /* Posición adaptable */
+  right: clamp(12px, 3vw, 35px);
+  bottom: calc(
+    env(safe-area-inset-bottom, 0px) +
+    clamp(160px, 22vh, 200px)
+  );
+
+  /* Tamaño adaptable */
+  width: clamp(45px, 5vw, 55px);
+  height: clamp(45px, 5vw, 55px);
+
   border-radius: 50%;
   background-color: #da1616;
   color: #fff;
   border: none;
+
   display: none; /* oculto por defecto */
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  font-size: 22px;
   z-index: 1000;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  font-size: clamp(18px, 2.5vw, 22px);
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
-
+/* Hover */
 .floating-cancel-route-btn:hover {
-  background: #b91c1c;
+  background-color: #b91c1c;
   transform: scale(1.08);
 }
+
+/* Feedback táctil */
+.floating-cancel-route-btn:active {
+  transform: scale(0.95);
+}
+
+

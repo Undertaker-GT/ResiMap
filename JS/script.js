@@ -4,6 +4,7 @@ let lastRouteUpdateLocation = null;
 const ROUTE_UPDATE_DISTANCE = 10; // metros esto lo puedo ajustar segun vea comveniente comenzare con 10
 let autoFollow = true;   // seguimiento activo
 let userInteracting = false;
+let mapaEnMovimiento = false;
 
 let sectorModalActivo = null;
 
@@ -51,6 +52,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Mapa base centrado en un punto general de la residencial
 const center = [14.41137, -90.68142]; // Centro de la residencial
 map = L.map('map').setView(center, 17); // Siempre inicia aquí
+
+map.on("zoomend", actualizarEstiloPinesPorZoom);
+
+map.on("movestart zoomstart", () => {
+  mapaEnMovimiento = true;
+});
+
+map.on("moveend zoomend", () => {
+  mapaEnMovimiento = false;
+
+  // 🔥 aplicar animación SOLO cuando termina
+  animarPinesVisibles();
+});
+
+
 
 // Reemplazar la capa actual de OpenStreetMap con esto:
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -913,6 +929,8 @@ let activeSectorPolygon = null;
 
 Object.keys(sectores).forEach(sectorId => {
   const sector = sectores[sectorId];
+  actualizarEstiloPinesPorZoom();
+
 
   const icon = L.divIcon({
     className: "sector-marker",
@@ -1556,3 +1574,55 @@ document.querySelector('.floating-location-btn')
   window.addEventListener("resize", () => {
   map.invalidateSize();
 });
+
+function actualizarEstiloPinesPorZoom() {
+  const zoom = map.getZoom();
+
+  Object.values(sectorPins).forEach(pinId => {
+    const pin = document.getElementById(pinId);
+    if (!pin) return;
+
+    // Ocultar en zoom lejano
+    if (zoom <= 14) {
+      pin.style.display = "none";
+      return;
+    } else {
+      pin.style.display = "flex";
+    }
+
+    pin.classList.remove("zoom-far", "zoom-mid", "zoom-near");
+
+    if (zoom <= 15) {
+      pin.classList.add("zoom-far");
+    } else if (zoom <= 17) {
+      pin.classList.add("zoom-mid");
+    } else {
+      pin.classList.add("zoom-near");
+    }
+
+    // ❌ NO animar mientras se mueve
+    if (mapaEnMovimiento) {
+      pin.classList.remove("animate-in");
+    }
+  });
+}
+
+function animarPinesVisibles() {
+  Object.values(sectorPins).forEach(pinId => {
+    const pin = document.getElementById(pinId);
+    if (!pin) return;
+
+    // Solo si está visible
+    if (pin.style.display === "none") return;
+
+    // Reiniciar animación
+    pin.classList.remove("animate-in");
+
+    // Forzar reflow (truco CSS)
+    void pin.offsetWidth;
+
+    // Activar animación
+    pin.classList.add("animate-in");
+  });
+}
+
