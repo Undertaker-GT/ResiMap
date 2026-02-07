@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mapa GPS de la Residencial</title>
+  <title>🗺️ResiMap</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="CSS/estilo.css" />
@@ -41,10 +41,45 @@
 
 
 <body style="margin: 0; padding: 0; overflow: hidden;">
-  <!-- Logo en la esquina superior derecha -->
-  <div class="residential-logo">
-    <img src="image/logo-gps.png" alt="Logo GPS Residencial" title="Residencial GPS">
+  
+  <!-- Botón menú lateral -->
+<button class="floating-menu-btn" onclick="toggleSideMenu()" title="Menú">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Menú lateral -->
+<div id="sideMenu" class="side-menu">
+  <div class="side-menu-header">
+    <h3>ResiMap</h3>
+              <!-- Logo en el menu -->
+    <div class="menu-logo">
+      <img src="image/logo-gps.png" alt="Logo GPS Residencial">
+    </div>
+    <button class="close-side-menu" onclick="toggleSideMenu()">×</button>
   </div>
+
+  <div class="side-menu-content">
+    <button class="menu-item" onclick="centrarEnUsuario()">
+      <i class="fas fa-location-crosshairs"></i>
+      Mi ubicación
+    </button>
+
+    <button class="menu-item" onclick="toggleSearchModal()">
+      <i class="fas fa-search"></i>
+      Buscar sector
+    </button>
+
+    <button class="menu-item" onclick="cancelarRuta()">
+      <i class="fas fa-route"></i>
+      Cancelar ruta
+    </button>
+
+    <!-- 🔥 aquí podrás agregar más funciones -->
+  </div>
+</div>
+
+<!-- Fondo oscuro -->
+<div id="sideMenuOverlay" class="side-menu-overlay" onclick="toggleSideMenu()"></div>
 
   <!-- Botón de búsqueda flotante -->
   <button class="floating-search-btn" onclick="toggleSearchModal()" title="Buscar sector">
@@ -129,5 +164,6 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
   <script src="JS/script.js"></script>
+  
 </body>
 </html>

@@ -1034,113 +1034,140 @@ html, body {
 .btn-secondary:hover {
   background: #e2e8f0;
 }
-/* ===== PIN DE SECTOR (DISCRETO) ===== */
-.sector-marker {
-  background: transparent;
-  border: none;
-}
 
+/* ===== PIN DE SECTOR ===== */
 .sector-pin {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-
-  background: rgba(37, 99, 235, 0.65); /* azul suave */
-  color: #fff;
-
-  font-size: 12px;
-  font-weight: 600;
-
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-
-  box-shadow: none; /* 🔥 clave para que no canse */
-  opacity: 0.75;
-
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease,
-    background-color 0.2s ease;
-}
-
-/* Hover: se aclara y crece */
-.sector-pin:hover {
-  opacity: 1;
-  transform: scale(1.15);
-  background: #2563eb;
   cursor: pointer;
+  user-select: none;
 }
 
-/* ===== ESTADOS POR ZOOM ===== */
-
-/* Zoom lejano: ultra discreto */
-.sector-pin.zoom-far {
-  width: 20px;
-  height: 20px;
-  font-size: 10px;
-  opacity: 0.4;
-  background: rgba(0, 0, 0, 0.35);
+/* Emoji */
+.sector-icon {
+  font-size: 20px;
 }
 
-/* Zoom medio: balanceado */
-.sector-pin.zoom-mid {
-  width: 26px;
-  height: 26px;
-  font-size: 12px;
-  opacity: 0.7;
-  background: rgba(37, 99, 235, 0.65);
+/* Número del sector */
+.sector-text {
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffffff;
+
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0px  0px 2px #000;
 }
 
-/* Zoom cercano: claro y usable */
-.sector-pin.zoom-near {
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
-  opacity: 1;
-  background: #2563eb;
-}
-
-/* Mantener prioridad para estados importantes */
-.sector-pin.active,
-.sector-pin.error {
-  opacity: 1 !important;
+/* Hover */
+.sector-pin:hover {
   transform: scale(1.15);
 }
 
 
-
-
-/* ===== ESTADOS DEL PIN ===== */
-
-/* Normal (por defecto) */
-.sector-pin {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-}
-
-.sector-pin::after {
-  border-top-color: #1e40af;
-}
-
-/* 🟢 Sector activo */
-.sector-pin.active {
-  background: linear-gradient(135deg, #16a34a, #166534);
-}
-
-.sector-pin.active::after {
-  border-top-color: #166534;
-}
-
-/* 🔴 Error */
+/* Error */
 .sector-pin.error {
-  background: linear-gradient(135deg, #dc2626, #7f1d1d);
+  border-color: #dc2626;
 }
 
-.sector-pin.error::after {
-  border-top-color: #7f1d1d;
+.sector-pin.error .sector-text {
+  color: #dc2626;
 }
+.zoom-far .sector-text {
+  display: none;
+}
+
+/* Transición suave del icono */
+.sector-icon {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Zoom lejano */
+.zoom-far .sector-icon {
+  opacity: 0.25;
+}
+
+/* Zoom medio */
+.zoom-mid .sector-icon {
+  opacity: 0.6;
+}
+
+/* Zoom cercano */
+.zoom-near .sector-icon {
+  opacity: 1;
+}
+.zoom-far .sector-icon {
+  opacity: 0.25;
+  transform: scale(0.85);
+}
+
+.zoom-mid .sector-icon {
+  opacity: 0.6;
+  transform: scale(0.95);
+}
+
+.zoom-near .sector-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+/* Transición suave del número */
+.sector-text {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Zoom lejano */
+.zoom-far .sector-text {
+  opacity: 0.45;
+}
+
+/* Zoom medio */
+.zoom-mid .sector-text {
+  opacity: 0.75;
+}
+
+/* Zoom cercano */
+.zoom-near .sector-text {
+  opacity: 1;
+}
+.zoom-far .sector-text {
+  opacity: 0.45;
+  transform: scale(0.9);
+}
+
+.zoom-mid .sector-text {
+  opacity: 0.75;
+  transform: scale(0.95);
+}
+
+.zoom-near .sector-text {
+  opacity: 1;
+  transform: scale(1);
+}
+.sector-icon {
+  font-size: clamp(18px, 2.2vw, 22px);
+}
+
+.sector-text {
+  font-size: clamp(13px, 1.8vw, 16px);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sector-pin:hover {
+    transform: scale(1.15);
+  }
+}
+.sector-pin {
+  padding: 6px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+
 
 
 /* ===== BOTÓN CANCELAR RUTA (RESPONSIVE) ===== */
@@ -1188,4 +1215,158 @@ html, body {
   transform: scale(0.95);
 }
 
+/* ===== BOTÓN MENÚ ===== */
+.floating-menu-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #70492f;
+  color: white;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 1100;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
 
+.floating-menu-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ===== MENÚ LATERAL ===== */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: clamp(260px, 22vw, 340px);
+  max-width: 85vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 2000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.side-menu.active {
+  transform: translateX(0);
+}
+
+/* Header */
+.side-menu-header {
+  padding: 16px;
+  background: #70492f;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.side-menu-header h3 {
+  margin: 0;
+  font-size: 18px;
+    text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0px  0px 2px #000;
+}
+
+.close-side-menu {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Contenido */
+.side-menu-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.menu-item i {
+  font-size: 18px;
+  color: #2563eb;
+}
+
+.menu-item:hover {
+  background: #e5edff;
+  transform: translateX(4px);
+}
+
+/* ===== OVERLAY ===== */
+.side-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1500;
+  display: none;
+}
+
+.side-menu-overlay.active {
+  display: block;
+}
+
+.floating-menu-btn {
+  width: clamp(46px, 5vw, 56px);
+  height: clamp(46px, 5vw, 56px);
+  font-size: clamp(20px, 2.5vw, 24px);
+}
+
+
+/* Móvil */
+@media (max-width: 768px) {
+  .side-menu {
+    width: 260px;
+  }
+}
+
+/* ===== LOGO DENTRO DEL MENÚ ===== */
+.menu-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-logo img {
+  width: clamp(350px, 60%, 180px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+.side-menu-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+.close-side-menu {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}

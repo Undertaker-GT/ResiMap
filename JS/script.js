@@ -932,10 +932,18 @@ Object.keys(sectores).forEach(sectorId => {
   actualizarEstiloPinesPorZoom();
 
 
-  const icon = L.divIcon({
-    className: "sector-marker",
-    html: `<div class="sector-pin" id="sector-pin-${sectorId}">${sectorId}</div>`
-  });
+const icon = L.divIcon({
+  className: "sector-marker",
+  html: `
+    <div class="sector-pin" id="sector-pin-${sectorId}">
+      <span class="sector-icon">🏘️</span>
+      <span class="sector-text">${sectorId}</span>
+    </div>
+  `,
+  iconSize: [40, 40],
+  iconAnchor: [20, 40]
+});
+
 
   const marker = L.marker(sector.coords, { icon }).addTo(map);
 
@@ -1620,3 +1628,16 @@ function animarPinesVisibles() {
   });
 }
 
+function toggleSideMenu() {
+  const menu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("sideMenuOverlay");
+
+  menu.classList.toggle("active");
+  overlay.classList.toggle("active");
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.getElementById("sideMenu")?.classList.remove("active");
+    document.getElementById("sideMenuOverlay")?.classList.remove("active");
+  }
+});
