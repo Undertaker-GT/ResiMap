@@ -1388,3 +1388,28 @@ html, body {
 }
 
 
+/* Botón menú dentro de la barra */
+.search-menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #555;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+/* Botón buscar */
+.search-go-btn {
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-go-btn:hover {
+  background: #1d4ed8;
+}

@@ -41,26 +41,29 @@
 
 
 <body style="margin: 0; padding: 0; overflow: hidden;">
-  <!-- Barra de búsqueda tipo Google Maps -->
+  <!-- Barra de búsqueda -->
   <div class="map-search-bar">
-    <i class="fas fa-search"></i>
+
+    <!-- BOTÓN MENÚ DENTRO DE LA BARRA -->
+    <button class="search-menu-btn" onclick="toggleSideMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <input 
       type="text" 
       id="mapSearchInput" 
       placeholder="Buscar sector o casa (Ej: 23, Sector 23, 23 casa 12)"
       onkeydown="if(event.key==='Enter') buscarDesdeBarra()"
     >
-    <button onclick="buscarDesdeBarra()">
-      <i class="fas fa-arrow-right"></i>
+
+    <button class="search-go-btn" onclick="buscarDesdeBarra()">
+      <i class="fas fa-search"></i>
     </button>
+
   </div>
+
   <div class="map-search-suggestions" id="mapSearchSuggestions"></div>
 
-
-  <!-- Botón menú lateral -->
-<button class="floating-menu-btn" onclick="toggleSideMenu()" title="Menú">
-  <i class="fas fa-bars"></i>
-</button>
 
 <!-- Menú lateral -->
 <div id="sideMenu" class="side-menu">
