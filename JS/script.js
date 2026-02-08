@@ -5,13 +5,13 @@ const ROUTE_UPDATE_DISTANCE = 10; // metros esto lo puedo ajustar segun vea comv
 let autoFollow = true;   // seguimiento activo
 let userInteracting = false;
 let mapaEnMovimiento = false;
-
 let sectorModalActivo = null;
 
 
 let map;
 let routingControl;
 let userLocation = null;
+
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1641,3 +1641,69 @@ document.addEventListener("keydown", e => {
     document.getElementById("sideMenuOverlay")?.classList.remove("active");
   }
 });
+
+//BARRA DE BUSQUEDA ------------------------------------------------------------------------------------------------------------------------------------
+function buscarDesdeBarra() {
+  const input = document.getElementById("mapSearchInput").value.toLowerCase();
+  const box = document.getElementById("mapSearchSuggestions");
+  box.style.display = "none";
+
+  if (!input.trim()) return;
+
+  const numeros = input.match(/\d+/g);
+  if (!numeros) {
+    alert("Ingrese un sector válido");
+    return;
+  }
+
+  const sectorId = numeros[0];
+  const casa = numeros[1] || "";
+
+  if (!sectores[sectorId]) {
+    alert("Sector no encontrado");
+    return;
+  }
+
+  document.getElementById("houseNumber").value = casa;
+
+  activarSector(sectorId);
+  trazarRutaASector(sectorId);
+}
+
+function mostrarSugerencias() {
+  const input = document.getElementById("mapSearchInput").value.toLowerCase();
+  const box = document.getElementById("mapSearchSuggestions");
+  box.innerHTML = "";
+
+  if (!input.trim()) {
+    box.style.display = "none";
+    return;
+  }
+
+  const sectorKey = normalizarEntradaSector(input);
+
+  // Mostrar coincidencias
+  Object.keys(sectores).forEach(id => {
+    if (id.startsWith(sectorKey)) {
+      const sector = sectores[id];
+
+      const item = document.createElement("div");
+      item.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${sector.name} (Sector ${id})`;
+
+      item.onclick = () => {
+        document.getElementById("mapSearchInput").value = id;
+        box.style.display = "none";
+        buscarDesdeBarra();
+      };
+
+      box.appendChild(item);
+    }
+  });
+
+  // Si no hay resultados
+  if (box.innerHTML === "") {
+    box.innerHTML = `<div style="color:#999;">No se encontraron sectores</div>`;
+  }
+
+  box.style.display = "block";
+}

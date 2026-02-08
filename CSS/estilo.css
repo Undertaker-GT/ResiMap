@@ -220,69 +220,6 @@ button {
   background-color: #bbdefb;
 }
 
-
-/* Estilo para el logo --------------------------------------------------------------------------------------------------------------------*/
-.residential-logo {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-
-  z-index: 2000;
-
-  width: min(240px, 35vw); /* 🔥 mejor que clamp aquí */
-  max-width: 240px;
-  min-width: 120px;
-
-  opacity: 0.85;
-  pointer-events: none; /* no estorba el mapa */
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.residential-logo img {
-  width: 100%;
-  height: auto;
-  object-fit: contain; /* 🔥 evita deformación */
-  aspect-ratio: auto; /* protege proporción */
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
-}
-@media (max-width: 768px) {
-  .residential-logo {
-    top: 12px;
-    right: 12px;
-    width: min(180px, 45vw);
-    opacity: 0.8;
-  }
-}
-@media (max-width: 480px) {
-  .residential-logo {
-    top: 10px;
-    right: 10px;
-    width: min(150px, 55vw);
-    opacity: 0.75;
-  }
-}
-.leaflet-top.leaflet-right {
-  margin-top: 70px;
-}
-.residential-logo {
-  animation: logoFadeIn 0.4s ease-out;
-}
-
-@keyframes logoFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 0.85;
-    transform: translateY(0);
-  }
-}
-
-
-
 /* Botón flotante de búsqueda ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .floating-search-btn {
   position: fixed;
@@ -1370,3 +1307,84 @@ html, body {
   top: 12px;
   right: 12px;
 }
+
+/* ===== BARRA DE BUSQUEDA ===== */
+.map-search-bar {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  width: 90%;
+  max-width: 450px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.map-search-bar i {
+  color: #555;
+  font-size: 16px;
+}
+
+.map-search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  padding: 6px 10px;
+}
+
+.map-search-bar button {
+  background: #9c9c9c;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.map-search-bar button:hover {
+  background: #858585;
+}
+.map-search-suggestions {
+  position: fixed;
+  top: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 450px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+  overflow: hidden;
+  display: none;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.map-search-suggestions div {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.map-search-suggestions div:hover {
+  background: #f3f4f6;
+}
+
+.map-search-suggestions i {
+  color: #2563eb;
+}
+
+
