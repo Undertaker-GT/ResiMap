@@ -12,6 +12,9 @@ let map;
 let routingControl;
 let userLocation = null;
 
+let userDirectionMarker = null;
+let userHeading = 0;
+
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1060,6 +1063,22 @@ map.on('locationfound', function (e) {
     userMarker.setLatLng(userLocation);
   }
 
+  if (!userDirectionMarker) {
+  userDirectionMarker = L.marker(userLocation, {
+    icon: L.divIcon({
+      className: "user-direction-marker",
+      html: `
+        <div class="user-dot"></div>
+        <div class="user-cone" id="userCone"></div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
+    })
+  }).addTo(map);
+  } else {
+    userDirectionMarker.setLatLng(userLocation);
+  }
+
   // ⛔ Si no hay ruta activa, salir
   if (!routingControl || !destinationLatLng) return;
 
@@ -1630,11 +1649,40 @@ function animarPinesVisibles() {
 
 function toggleSideMenu() {
   const menu = document.getElementById("sideMenu");
-  const overlay = document.getElementById("sideMenuOverlay");
-
+  const overlay = document.getElementById("menuOverlay");
+  
   menu.classList.toggle("active");
   overlay.classList.toggle("active");
 }
+
+// Función para cerrar el menú (usada por el overlay)
+function closeSideMenu() {
+  const menu = document.getElementById("sideMenu");
+  const overlay = document.getElementById("menuOverlay");
+  
+  menu.classList.remove("active");
+  overlay.classList.remove("active");
+}
+
+// También cierra con Escape
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    closeSideMenu();
+  }
+});
+
+// Cierra el menú al hacer clic en cualquier enlace/botón dentro del menú
+document.addEventListener("DOMContentLoaded", function() {
+  const menuItems = document.querySelectorAll('.side-menu-content .menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      // Cierra el menú después de un pequeño retraso para que se ejecute la acción del botón
+      setTimeout(closeSideMenu, 100);
+    });
+  });
+});
+
+
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
     document.getElementById("sideMenu")?.classList.remove("active");
@@ -1707,3 +1755,43 @@ function mostrarSugerencias() {
 
   box.style.display = "block";
 }
+// iPhone requiere permiso
+function requestIOSPermission() {
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+    
+    DeviceOrientationEvent.requestPermission().then(response => {
+      if (response === "granted") {
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    }).catch(console.error);
+  } else {
+    window.addEventListener("deviceorientationabsolute", handleOrientation);
+    window.addEventListener("deviceorientation", handleOrientation);
+  }
+}
+
+// Detectar orientación
+function handleOrientation(event) {
+  let heading = event.alpha;
+
+  // iOS usa webkitCompassHeading
+  if (event.webkitCompassHeading) {
+    heading = event.webkitCompassHeading;
+  }
+
+  if (heading != null) {
+    userHeading = heading;
+    rotateUserCone();
+  }
+}
+
+// Rotar el cono
+function rotateUserCone() {
+  const cone = document.getElementById("userCone");
+  if (!cone) return;
+  cone.style.transform = `rotate(${userHeading}deg)`;
+}
+
+// Pedir permiso al tocar pantalla (iPhone)
+document.addEventListener("click", requestIOSPermission, { once: true });
