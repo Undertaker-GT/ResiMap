@@ -1433,10 +1433,13 @@ html, body {
 
 /* indicador de orientación del usuario --------------------------------------------------- */
 .user-direction {
+  position: absolute;
   width: 0;
   height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 30px solid rgba(0, 140, 255, 0.4);
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 40px solid rgba(0, 140, 255, 0.35);
   transform-origin: center bottom;
+  pointer-events: none;
 }
+

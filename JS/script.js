@@ -1054,6 +1054,10 @@ map.locate({
 map.on('locationfound', function (e) {
   userLocation = e.latlng;
 
+  const point = map.latLngToContainerPoint(userLocation);
+  cone.style.left = (point.x - 20) + "px";
+  cone.style.top  = (point.y - 40) + "px";
+
   // Crear o mover marcador
   if (!directionMarker) {
     directionMarker = L.marker(userLocation, {
@@ -1763,28 +1767,38 @@ function mostrarSugerencias() {
 }
 
 //Mierda para la orientacion del usuario  (aver  si funciona)
+// VARIABLES GLOBALES
 let currentHeading = 0;
+let smoothHeading = 0;   // 👈 AQUÍ
 
-// iOS requiere permiso
-if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-  DeviceOrientationEvent.requestPermission().catch(()=>{}).then(response => {
-    if (response === "granted") {
-      window.addEventListener("deviceorientation", handleOrientation);
-    }
-  });
-} else {
-  window.addEventListener("deviceorientation", handleOrientation);
+// FUNCIÓN DE SUAVIZADO
+function smoothAngle(newAngle) {   // 👈 AQUÍ
+  const diff = ((newAngle - smoothHeading + 540) % 360) - 180;
+  smoothHeading = (smoothHeading + diff * 0.15) % 360;
+  return smoothHeading;
 }
 
+// FUNCIÓN DE ORIENTACIÓN
 function handleOrientation(event) {
-  if (event.alpha === null) return;
+  let heading;
 
-  // Alpha = brújula (0° norte)
-  currentHeading = event.alpha;
+  if (event.webkitCompassHeading !== undefined) {
+    heading = event.webkitCompassHeading;
+  } else if (event.alpha !== null) {
+    heading = 360 - event.alpha;
+  } else {
+    return;
+  }
+
+  // SUAVIZAR
+  heading = smoothAngle(heading);
+
+  currentHeading = heading;
 
   const arrow = document.getElementById("directionArrow");
   if (arrow) {
-    arrow.style.transform = `rotate(${currentHeading}deg)`;
+    arrow.style.transform = `rotate(${heading}deg)`;
   }
 }
+
 
