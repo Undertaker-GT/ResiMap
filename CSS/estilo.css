@@ -1432,14 +1432,55 @@ html, body {
 }
 
 /* indicador de orientación del usuario --------------------------------------------------- */
-.user-direction {
+/* Contenedor */
+.user-location-wrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+/* Halo azul estilo Google Maps */
+.user-location-pulse {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: rgba(66, 133, 244, 0.25);
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+}
+
+/* Punto central */
+.user-location-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #1a73e8;
+  border-radius: 50%;
+  border: 2px solid white;
+  top: 14px;
+  left: 14px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
+
+/* Flecha de orientación */
+.user-location-arrow {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 40px solid rgba(0, 140, 255, 0.35);
-  transform-origin: center bottom;
-  pointer-events: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid #1a73e8;
+  top: -6px;
+  left: 14px;
+  transform-origin: center 20px;
+  transition: transform 0.2s linear;
+}
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
 }
 
+.user-location-pulse {
+  animation: pulse 2s infinite;
+}

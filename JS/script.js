@@ -15,9 +15,6 @@ let userLocation = null;
 let userDirectionMarker = null;
 let userHeading = 0;
 
-let directionMarker = null;
-
-
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1054,23 +1051,24 @@ map.locate({
 map.on('locationfound', function (e) {
   userLocation = e.latlng;
 
-  const point = map.latLngToContainerPoint(userLocation);
-  cone.style.left = (point.x - 20) + "px";
-  cone.style.top  = (point.y - 40) + "px";
-
   // Crear o mover marcador
-  if (!directionMarker) {
-    directionMarker = L.marker(userLocation, {
+  if (!userMarker) {
+    userMarker = L.marker(userLocation, {
       icon: L.divIcon({
-        className: "",
-        html: `<div id="directionArrow" class="user-direction"></div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 30]
-      }),
-      interactive: false
+        className: "user-location-icon",
+        html: `
+          <div class="user-location-wrapper">
+            <div class="user-location-pulse"></div>
+            <div class="user-location-dot"></div>
+            <div class="user-location-arrow" id="userHeadingArrow"></div>
+          </div>
+        `,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+      })
     }).addTo(map);
   } else {
-    directionMarker.setLatLng(userLocation);
+    userMarker.setLatLng(userLocation);
   }
 
   if (!userDirectionMarker) {
@@ -1766,39 +1764,23 @@ function mostrarSugerencias() {
   box.style.display = "block";
 }
 
-//Mierda para la orientacion del usuario  (aver  si funciona)
-// VARIABLES GLOBALES
-let currentHeading = 0;
-let smoothHeading = 0;   // 👈 AQUÍ
+//ORIENTACION DEL USUARIO
+let smoothHeading = 0;
 
-// FUNCIÓN DE SUAVIZADO
-function smoothAngle(newAngle) {   // 👈 AQUÍ
+function smoothAngle(newAngle) {
   const diff = ((newAngle - smoothHeading + 540) % 360) - 180;
   smoothHeading = (smoothHeading + diff * 0.15) % 360;
   return smoothHeading;
 }
 
-// FUNCIÓN DE ORIENTACIÓN
-function handleOrientation(event) {
-  let heading;
+if (window.DeviceOrientationEvent) {
+  window.addEventListener("deviceorientation", (event) => {
+    if (event.alpha == null) return;
 
-  if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading;
-  } else if (event.alpha !== null) {
-    heading = 360 - event.alpha;
-  } else {
-    return;
-  }
-
-  // SUAVIZAR
-  heading = smoothAngle(heading);
-
-  currentHeading = heading;
-
-  const arrow = document.getElementById("directionArrow");
-  if (arrow) {
-    arrow.style.transform = `rotate(${heading}deg)`;
-  }
+    const heading = smoothAngle(event.alpha);
+    const arrow = document.getElementById("userHeadingArrow");
+    if (arrow) {
+      arrow.style.transform = `rotate(${heading}deg)`;
+    }
+  });
 }
-
-
