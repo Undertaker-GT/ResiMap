@@ -1060,7 +1060,7 @@ map.on('locationfound', function (e) {
           <div class="user-location-wrapper">
             <div class="user-location-pulse"></div>
             <div class="user-location-dot"></div>
-            <div class="user-location-arrow" id="userHeadingArrow"></div>
+            <div class="user-location-arrow"></div>
           </div>
         `,
         iconSize: [40, 40],
@@ -1769,48 +1769,65 @@ let smoothHeading = 0;
 
 function smoothAngle(newAngle) {
   const diff = ((newAngle - smoothHeading + 540) % 360) - 180;
-  smoothHeading = (smoothHeading + diff * 0.15) % 360;
+  smoothHeading = (smoothHeading + diff * 0.2) % 360;
   return smoothHeading;
 }
 
 function iniciarBrújula() {
   window.addEventListener("deviceorientation", (event) => {
-    if (event.alpha == null) return;
 
-    const heading = smoothAngle(event.alpha);
-    const arrow = document.getElementById("userHeadingArrow");
+    let heading = null;
+
+    // 🍏 iOS Safari
+    if (event.webkitCompassHeading !== undefined) {
+      heading = event.webkitCompassHeading;
+    }
+    // 🤖 Android Chrome
+    else if (event.alpha !== null) {
+      heading = 360 - event.alpha;
+    }
+
+    if (heading === null) return;
+
+    heading = smoothAngle(heading);
+
+    // ⚠️ Leaflet recrea el DOM, NO uses getElementById
+    const arrow = document.querySelector(".user-location-arrow");
     if (arrow) {
       arrow.style.transform = `rotate(${heading}deg)`;
     }
+
+    console.log("Heading:", heading);
   });
 
   console.log("🧭 Brújula activada");
 }
+
 
 document.addEventListener("click", solicitarPermisoBrújula, { once: true });
 
 
 //permisos para usar la brujula en varios sistemas
 async function solicitarPermisoBrújula() {
-  // iOS 13+
+
   if (typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function") {
 
     try {
-      const permission = await DeviceOrientationEvent.requestPermission();
-      if (permission === "granted") {
+      const response = await DeviceOrientationEvent.requestPermission();
+      console.log("Permiso:", response);
+
+      if (response === "granted") {
         iniciarBrújula();
-      } else {
-        console.warn("Permiso de brújula denegado");
       }
-    } catch (err) {
-      console.error("Error al pedir permiso:", err);
+
+    } catch (e) {
+      console.error("Error permiso:", e);
     }
 
-  } 
-  // Android y navegadores normales
-  else {
-    iniciarBrújula();
+  } else {
+    iniciarBrújula(); // Android
   }
 }
+
 
