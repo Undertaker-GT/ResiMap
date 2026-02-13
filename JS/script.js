@@ -1773,7 +1773,7 @@ function smoothAngle(newAngle) {
   return smoothHeading;
 }
 
-if (window.DeviceOrientationEvent) {
+function iniciarBrújula() {
   window.addEventListener("deviceorientation", (event) => {
     if (event.alpha == null) return;
 
@@ -1783,4 +1783,34 @@ if (window.DeviceOrientationEvent) {
       arrow.style.transform = `rotate(${heading}deg)`;
     }
   });
+
+  console.log("🧭 Brújula activada");
 }
+
+document.addEventListener("click", solicitarPermisoBrújula, { once: true });
+
+
+//permisos para usar la brujula en varios sistemas
+async function solicitarPermisoBrújula() {
+  // iOS 13+
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+
+    try {
+      const permission = await DeviceOrientationEvent.requestPermission();
+      if (permission === "granted") {
+        iniciarBrújula();
+      } else {
+        console.warn("Permiso de brújula denegado");
+      }
+    } catch (err) {
+      console.error("Error al pedir permiso:", err);
+    }
+
+  } 
+  // Android y navegadores normales
+  else {
+    iniciarBrújula();
+  }
+}
+
