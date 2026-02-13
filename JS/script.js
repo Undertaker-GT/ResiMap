@@ -15,6 +15,9 @@ let userLocation = null;
 let userDirectionMarker = null;
 let userHeading = 0;
 
+let directionMarker = null;
+
+
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1052,15 +1055,18 @@ map.on('locationfound', function (e) {
   userLocation = e.latlng;
 
   // Crear o mover marcador
-  if (!userMarker) {
-    userMarker = L.marker(userLocation, {
+  if (!directionMarker) {
+    directionMarker = L.marker(userLocation, {
       icon: L.divIcon({
-        html: '<div style="background:#3388ff;width:12px;height:12px;border-radius:50%;border:2px solid white;"></div>',
-        iconSize: [16, 16]
-      })
+        className: "",
+        html: `<div id="directionArrow" class="user-direction"></div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 30]
+      }),
+      interactive: false
     }).addTo(map);
   } else {
-    userMarker.setLatLng(userLocation);
+    directionMarker.setLatLng(userLocation);
   }
 
   if (!userDirectionMarker) {
@@ -1075,9 +1081,9 @@ map.on('locationfound', function (e) {
       iconAnchor: [20, 20]
     })
   }).addTo(map);
-  } else {
-    userDirectionMarker.setLatLng(userLocation);
-  }
+} else {
+  userDirectionMarker.setLatLng(userLocation);
+}
 
   // ⛔ Si no hay ruta activa, salir
   if (!routingControl || !destinationLatLng) return;
@@ -1755,43 +1761,30 @@ function mostrarSugerencias() {
 
   box.style.display = "block";
 }
-// iPhone requiere permiso
-function requestIOSPermission() {
-  if (typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function") {
-    
-    DeviceOrientationEvent.requestPermission().then(response => {
-      if (response === "granted") {
-        window.addEventListener("deviceorientation", handleOrientation);
-      }
-    }).catch(console.error);
-  } else {
-    window.addEventListener("deviceorientationabsolute", handleOrientation);
-    window.addEventListener("deviceorientation", handleOrientation);
-  }
+
+//Mierda para la orientacion del usuario  (aver  si funciona)
+let currentHeading = 0;
+
+// iOS requiere permiso
+if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+  DeviceOrientationEvent.requestPermission().catch(()=>{}).then(response => {
+    if (response === "granted") {
+      window.addEventListener("deviceorientation", handleOrientation);
+    }
+  });
+} else {
+  window.addEventListener("deviceorientation", handleOrientation);
 }
 
-// Detectar orientación
 function handleOrientation(event) {
-  let heading = event.alpha;
+  if (event.alpha === null) return;
 
-  // iOS usa webkitCompassHeading
-  if (event.webkitCompassHeading) {
-    heading = event.webkitCompassHeading;
-  }
+  // Alpha = brújula (0° norte)
+  currentHeading = event.alpha;
 
-  if (heading != null) {
-    userHeading = heading;
-    rotateUserCone();
+  const arrow = document.getElementById("directionArrow");
+  if (arrow) {
+    arrow.style.transform = `rotate(${currentHeading}deg)`;
   }
 }
 
-// Rotar el cono
-function rotateUserCone() {
-  const cone = document.getElementById("userCone");
-  if (!cone) return;
-  cone.style.transform = `rotate(${userHeading}deg)`;
-}
-
-// Pedir permiso al tocar pantalla (iPhone)
-document.addEventListener("click", requestIOSPermission, { once: true });
