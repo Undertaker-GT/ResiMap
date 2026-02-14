@@ -15,8 +15,6 @@ let userLocation = null;
 let userDirectionMarker = null;
 let userHeading = 0;
 
-let userConeElement = null; // Referencia al elemento de la flecha
-
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1055,32 +1053,20 @@ map.on('locationfound', function (e) {
 
   // Crear o mover marcador
   if (!userMarker) {
-    // Crear el marcador UNA SOLA VEZ
     userMarker = L.marker(userLocation, {
       icon: L.divIcon({
-        className: "user-location-marker",
+        className: "user-location-icon",
         html: `
           <div class="user-location-wrapper">
             <div class="user-location-pulse"></div>
             <div class="user-location-dot"></div>
-            <div class="user-location-arrow" id="userCone"></div>
           </div>
         `,
         iconSize: [40, 40],
         iconAnchor: [20, 20]
       })
     }).addTo(map);
-    
-    // Guardar referencia a la flecha después de que se cree en el DOM
-    setTimeout(() => {
-      userConeElement = document.querySelector('.user-location-arrow');
-      if (userConeElement && userHeading) {
-        userConeElement.style.transform = `rotate(${userHeading}deg)`;
-      }
-    }, 100);
-    
   } else {
-    // Solo mover el marcador existente
     userMarker.setLatLng(userLocation);
   }
 
@@ -1777,127 +1763,3 @@ function mostrarSugerencias() {
   box.style.display = "block";
 }
 
-//ORIENTACION DEL USUARIO-------------------------------------------------------------------------------
-// Variables para la brújula
-let smoothHeading = 0;
-let lastHeading = 0;
-let headingInterval = null;
-
-function smoothAngle(newAngle) {
-  // Convertir a 0-360
-  newAngle = (newAngle + 360) % 360;
-  
-  // Calcular la diferencia más corta
-  let diff = newAngle - smoothHeading;
-  if (diff > 180) diff -= 360;
-  if (diff < -180) diff += 360;
-  
-  // Aplicar suavizado (0.15 para movimiento más natural)
-  smoothHeading = (smoothHeading + diff * 0.15 + 360) % 360;
-  
-  return smoothHeading;
-}
-
-function actualizarFlecha() {
-  if (!userConeElement) {
-    // Intentar obtener la referencia si no la tenemos
-    userConeElement = document.querySelector('.user-location-arrow');
-    if (!userConeElement) return;
-  }
-  
-  // Aplicar la rotación con una transición suave
-  userConeElement.style.transition = 'transform 0.1s ease-out';
-  userConeElement.style.transform = `rotate(${smoothHeading}deg)`;
-}
-
-function iniciarBrujula() {
-  console.log("🧭 Intentando activar brújula...");
-  
-  // Verificar si el dispositivo soporta orientación
-  if (!window.DeviceOrientationEvent) {
-    console.log("❌ DeviceOrientation no soportado");
-    alert("Tu dispositivo no soporta brújula");
-    return;
-  }
-
-  // Para iOS 13+ que requiere permiso
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    // El botón llamará a esta función, necesitamos el permiso aquí
-    console.log("📱 iOS detectado, esperando interacción del usuario");
-    // No hacemos nada, el permiso se solicitará al hacer clic
-    return;
-  }
-
-  // Android y otros - iniciar directamente
-  console.log("🤖 Android/otros detectado, iniciando brújula");
-  configurarListenersOrientacion();
-}
-
-function configurarListenersOrientacion() {
-  // Remover listeners anteriores si existen
-  window.removeEventListener('deviceorientation', manejarOrientacion);
-  
-  // Agregar nuevo listener
-  window.addEventListener('deviceorientation', manejarOrientacion);
-  console.log("✅ Listeners de orientación configurados");
-}
-
-function manejarOrientacion(event) {
-  let heading = null;
-
-  // iOS Safari (webkitCompassHeading)
-  if (event.webkitCompassHeading !== undefined) {
-    heading = event.webkitCompassHeading;
-  }
-  // Android Chrome (alpha)
-  else if (event.alpha !== null) {
-    // Convertir alpha a heading (0 = Norte)
-    heading = 360 - event.alpha;
-  }
-
-  if (heading === null) return;
-
-  // Suavizar el ángulo
-  heading = smoothAngle(heading);
-  
-  // Actualizar la flecha (limitar a 60fps)
-  if (!headingInterval) {
-    requestAnimationFrame(() => {
-      actualizarFlecha();
-      headingInterval = null;
-    });
-    headingInterval = true;
-  }
-}
-
-// Función mejorada para solicitar permisos en iOS
-async function solicitarPermisoBrujula() {
-  console.log("🔍 Solicitando permiso de brújula...");
-  
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    try {
-      const response = await DeviceOrientationEvent.requestPermission();
-      console.log("Respuesta permiso:", response);
-      
-      if (response === 'granted') {
-        configurarListenersOrientacion();
-        alert("✅ Brújula activada");
-      } else {
-        alert("❌ Permiso denegado para la brújula");
-      }
-    } catch (error) {
-      console.error("Error al solicitar permiso:", error);
-      alert("Error al activar brújula");
-    }
-  } else {
-    // En Android, iniciar directamente
-    configurarListenersOrientacion();
-    alert("✅ Brújula activada");
-  }
-}
-
-// Iniciar brújula cuando el usuario haga clic en el botón
-document.addEventListener('DOMContentLoaded', function() {
-  // El botón ya tiene onclick="solicitarPermisoBrujula()" en el HTML
-  console.log("🚀 App lista, esperando clic en botón brújula");
-});
