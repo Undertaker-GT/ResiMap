@@ -261,7 +261,7 @@ const sectores = {
       "26": [14.413188129372553, -90.68559368077877],
       "27": [14.413207878144103, -90.68551569149105],
       "28": [14.413228011005632, -90.68543388411535],
-      "19": [14.413248143865202, -90.68535878226454],
+      "29": [14.413248143865202, -90.68535878226454],
       "30": [14.413278667874785, -90.68528502152083],
       "31": [14.413319583028688, -90.6851991908327],
       "32": [14.413364394855101, -90.6851354883725]
@@ -1811,11 +1811,22 @@ function toggleLocation() {
 function onDestinoAlcanzado() {
   console.log("🏁 Llegaste a tu destino");
 
+  // 🔔 Vibración (solo móviles compatibles)
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
+
+  // 🔊 Sonido (por el momento no colocare esta parte, pero se queda aqui por futuras referencias)
+  //const audio = new Audio("sonido_llegada.mp3");
+  //audio.play().catch(e => console.log("Audio bloqueado por navegador"));
+
+  // 📢 Mensaje discreto
   mostrarToastDestino("Has llegado a tu destino 🏠");
 
-  // Borrar ruta automáticamente
+  // ❌ Borrar ruta automáticamente
   cancelarRuta();
 }
+
 function mostrarToastDestino(texto) {
   const toast = document.getElementById("destinoToast");
   toast.textContent = texto;
