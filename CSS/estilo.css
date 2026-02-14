@@ -1462,3 +1462,26 @@ html, body {
   left: 14px;
   box-shadow: 0 0 6px rgba(0,0,0,0.4);
 }
+
+/* Mensaje para el suario cuando llega a su destino----------------------------------- */
+.destino-toast {
+  position: fixed;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+.destino-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-10px);
+}

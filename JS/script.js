@@ -15,6 +15,13 @@ let userLocation = null;
 let userDirectionMarker = null;
 let userHeading = 0;
 
+let showingUserLocation = false; // false = residencial, true = usuario
+
+const DESTINO_UMBRAL_METROS = 15;
+let destinoAlcanzado = false;
+
+
+
 
 // Configuración inicial responsive
 function setupResponsive() {
@@ -1129,6 +1136,16 @@ map.on('locationfound', function (e) {
   });
   }
 
+  // 🏁 DETECTAR LLEGADA AL DESTINO
+  if (destinationLatLng && !destinoAlcanzado) {
+    const distancia = userLocation.distanceTo(destinationLatLng);
+
+    if (distancia <= DESTINO_UMBRAL_METROS) {
+      destinoAlcanzado = true;
+      onDestinoAlcanzado();
+    }
+  }
+
 });
 
 map.on('locationerror', function () {
@@ -1420,6 +1437,7 @@ function filterSectors() {
 }
 
 function trazarRutaASector(sectorKey) {
+  destinoAlcanzado = false;
   const sector = sectores[sectorKey];
 
    if (!sector || !userLocation) {
@@ -1763,3 +1781,47 @@ function mostrarSugerencias() {
   box.style.display = "block";
 }
 
+//FUNCION PARA CREAR EL BOTON PARA VOLVER A LA RESIDENCIAL  
+function toggleLocation() {
+
+  const icon = document.getElementById("locationIcon");
+  const btn = document.getElementById("locationToggleBtn");
+
+  if (!showingUserLocation) {
+    // 👉 IR A USUARIO
+    centrarEnUsuario();
+
+    icon.className = "fas fa-house"; // cambia icono
+    btn.title = "Volver a la residencial";
+
+    showingUserLocation = true;
+
+  } else {
+    // 👉 VOLVER A RESIDENCIAL
+    map.setView(center, 17, { animate: true });
+
+    icon.className = "fas fa-location-crosshairs";
+    btn.title = "Mi ubicación";
+
+    showingUserLocation = false;
+  }
+}
+
+//Cuando el usuario llega a su destino
+function onDestinoAlcanzado() {
+  console.log("🏁 Llegaste a tu destino");
+
+  mostrarToastDestino("Has llegado a tu destino 🏠");
+
+  // Borrar ruta automáticamente
+  cancelarRuta();
+}
+function mostrarToastDestino(texto) {
+  const toast = document.getElementById("destinoToast");
+  toast.textContent = texto;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 4000);
+}
