@@ -1,0 +1,124 @@
+/* ==============================
+   GASOLINERA PIN ZOOM EFFECT
+============================== */
+
+.gasolinera-pin {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Hover */
+.gasolinera-pin:hover {
+  transform: scale(1.15);
+}
+
+/* Zoom lejos */
+.gasolinera-pin.zoom-far {
+  opacity: 0.0;
+  transform: scale(0.85);
+}
+
+/* Zoom medio */
+.gasolinera-pin.zoom-mid {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
+/* Zoom cerca */
+.gasolinera-pin.zoom-near {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===============================
+   POPUP GASOLINERA ESTILO PRO
+================================ */
+
+.custom-gas-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.custom-gas-popup .leaflet-popup-content {
+  margin: 0;
+  width: 250px;
+}
+
+/* Card principal */
+.gas-card {
+  font-family: 'Segoe UI', sans-serif;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Header */
+.gas-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gas-icon {
+  font-size: 24px;
+}
+
+.gas-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Estado */
+.gas-status {
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.gas-status.abierto {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.gas-status.cerrado {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Horario */
+.gas-schedule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Botón */
+.gas-route-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.gas-route-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}

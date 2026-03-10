@@ -966,6 +966,7 @@ const icon = L.divIcon({
   sectorPins[sectorId] = `sector-pin-${sectorId}`;
 });
 
+
 function limpiarEstadoPines() {
   Object.values(sectorPins).forEach(pinId => {
     const pin = document.getElementById(pinId);
@@ -1028,15 +1029,40 @@ function activarSector(sectorId) {
 
   const sector = sectores[sectorId];
 
-  // 🔥 Quitar polígono anterior
+  //  Quitar polígono anterior
   if (activeSectorPolygon) {
     map.removeLayer(activeSectorPolygon);
     activeSectorPolygon = null;
   }
 
+  if (activepiscinaPolygon) {
+    map.removeLayer(activepiscinaPolygon);
+    activepiscinaPolygon = null;
+  }
+
+  if (activeCentroDeportivoPolygon) {
+    map.removeLayer(activeCentroDeportivoPolygon);
+    activeCentroDeportivoPolygon = null;
+  }
+  
+  if (activeAreaInfantilPolygon) {
+    map.removeLayer(activeAreaInfantilPolygon);
+    activeAreaInfantilPolygon = null;
+  }
+
+  if (activecolegioPolygon) {
+    map.removeLayer(activecolegioPolygon);
+    activecolegioPolygon = null;
+  }
+
+  if (activeGYMPolygon) {
+    map.removeLayer(activeGYMPolygon);
+    activeGYMPolygon = null;
+  }
+
   // 🟢 Crear SOLO este polígono
   activeSectorPolygon = L.polygon(sector.area, {
-    color: "#2563eb",
+    color: "#F5DEB3",
     weight: 2,
     fillOpacity: 0.25,
     interactive: false // importante
@@ -1208,6 +1234,8 @@ function buscarSector() {
     sectorLayers[sectorSelect].setStyle({
       weight: 3,
       color: "#00ff15"
+
+
     });
     // NOTA: Hemos eliminado el .openPopup() que estaba aquí
   }
@@ -1304,6 +1332,10 @@ map.on('locate', function(e) {
 map.on("dragstart zoomstart", () => {
   userInteracting = true;
   autoFollow = false;
+  showingUserLocation = false;
+
+  const icon = document.getElementById("locationIcon");
+  icon.className = "fas fa-location-crosshairs";
 });
 
 // boton para fijar al usuario
@@ -1603,6 +1635,26 @@ function cancelarRuta() {
     routingControl = null;
   }
 
+  if (activeCentroDeportivoPolygon) {
+  map.removeLayer(activeCentroDeportivoPolygon);
+  activeCentroDeportivoPolygon = null;
+  }
+
+  if (activeAreaInfantilPolygon) {
+  map.removeLayer(activeAreaInfantilPolygon);
+  activeAreaInfantilPolygon = null;
+  }
+
+  if (activepiscinaPolygon) {
+  map.removeLayer(activepiscinaPolygon);
+  activepiscinaPolygon = null;
+  }
+
+  if (activecolegioPolygon) {
+    map.removeLayer(activecolegioPolygon);
+    activecolegioPolygon = null;
+  }
+
   destinationLatLng = null;
   lastRouteUpdateLocation = null;
 
@@ -1613,7 +1665,7 @@ function cancelarRuta() {
   document.getElementById("cancelRouteBtn").style.display = "none";
 }
 
-function ocultarPoligonoSector() {
+function ocultarPoligonoSector() { //--------------------------------------------------------------------------------
   if (activeSectorPolygon) {
     map.removeLayer(activeSectorPolygon);
     activeSectorPolygon = null;
@@ -1788,16 +1840,24 @@ function toggleLocation() {
   const btn = document.getElementById("locationToggleBtn");
 
   if (!showingUserLocation) {
+
     // 👉 IR A USUARIO
+    autoFollow = true;
+    userInteracting = false;
+
     centrarEnUsuario();
 
-    icon.className = "fas fa-house"; // cambia icono
+    icon.className = "fas fa-house";
     btn.title = "Volver a la residencial";
 
     showingUserLocation = true;
 
   } else {
+
     // 👉 VOLVER A RESIDENCIAL
+    autoFollow = false;          // 🔥 ESTA ES LA CLAVE
+    userInteracting = false;     // reset
+
     map.setView(center, 17, { animate: true });
 
     icon.className = "fas fa-location-crosshairs";
