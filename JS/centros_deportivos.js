@@ -10,6 +10,10 @@ const centrosDeportivos = {
     {
       id: "cancha_basket_1",
       nombre: "Canchas de Baloncesto",
+      fotos:[
+        "image/areas-recreativas/Areas-deportivas/baloncesto/B1.jpeg",
+        "image/areas-recreativas/Areas-deportivas/baloncesto/B2.jpeg"
+      ],
 
       // 🔵 Centro real (para rutas)
       coords: [14.412439859074162, -90.6825479007556],
@@ -34,6 +38,10 @@ futbol: [
   {
     id: "cancha_futbol_1",
     nombre: "Canchas de Fútbol",
+    fotos:[
+      "image/areas-recreativas/Areas-deportivas/fucho/F2.jpeg",
+      "image/areas-recreativas/Areas-deportivas/fucho/F1.jpeg"
+    ],
 
     coords: [14.412214812648141, -90.68155954583099],
 
@@ -46,10 +54,13 @@ futbol: [
       [14.412182340141541, -90.68167689247956],
       [14.412147269830433, -90.68208257656758]
     ]
-  },
+  },  
   {
     id: "cancha_futbol_sintetica",
     nombre: "cancha de futbol (sintetica)",
+    fotos:[
+      "image/areas-recreativas/Areas-deportivas/fucho/sintetica.png"
+    ],
 
     coords: [14.412816028682927, -90.68361793641297],
 
@@ -99,6 +110,19 @@ function activarCentroDeportivo(cancha) {
     map.removeLayer(activeGYMPolygon);
     activeGYMPolygon = null;
   }
+
+  if (activeSALONPolygon) {
+    map.removeLayer(activeSALONPolygon);
+    activeSALONPolygon = null;
+  }
+
+  if(activeCentroPolygon){
+    map.removeLayer(activeCentroPolygon);
+    activeCentroPolygon = null;
+  }
+  
+
+
 
   // 🔥 Crear nuevo polígono
   activeCentroDeportivoPolygon = L.polygon(cancha.area, {
@@ -159,8 +183,25 @@ Object.keys(centrosDeportivos).forEach(tipoDeporte => {
 
 function mostrarPopupCentroDeportivo(cancha) {
 
+  const fotos = cancha.fotos || [];
+
+  const slides = fotos.map((foto, index) => `
+    <img src="${foto}" class="centro-slide ${index === 0 ? 'active' : ''}">
+  `).join("");
+
   const contenido = `
     <div class="centro-popup">
+
+      <div class="centro-carousel">
+        <div class="centro-slides">
+          ${slides}
+        </div>
+
+        ${fotos.length > 1 ? `
+          <button class="centro-prev" onclick="moverSlideCentro(-1)">❮</button>
+          <button class="centro-next" onclick="moverSlideCentro(1)">❯</button>
+        ` : ""}
+      </div>
       
       <div class="centro-popup-header">
         <div class="centro-icon">🏟️</div>
@@ -172,7 +213,6 @@ function mostrarPopupCentroDeportivo(cancha) {
 
       <button class="centro-btn"
         onclick="trazarRutaACentroDeportivo('${cancha.id}')">
-        <i class="fas fa-route"></i>
         Trazar ruta
       </button>
 
@@ -187,6 +227,30 @@ function mostrarPopupCentroDeportivo(cancha) {
     .setLatLng(cancha.coords)
     .setContent(contenido)
     .openOn(map);
+
+  currentCentroSlide = 0;
+}
+
+let currentCentroSlide = 0;
+
+function moverSlideCentro(direccion) {
+  const slides = document.querySelectorAll(".centro-slide");
+
+  if (slides.length === 0) return;
+
+  slides[currentCentroSlide].classList.remove("active");
+
+  currentCentroSlide += direccion;
+
+  if (currentCentroSlide < 0) {
+    currentCentroSlide = slides.length - 1;
+  }
+
+  if (currentCentroSlide >= slides.length) {
+    currentCentroSlide = 0;
+  }
+
+  slides[currentCentroSlide].classList.add("active");
 }
 
 function trazarRutaACentroDeportivo(idCancha) {

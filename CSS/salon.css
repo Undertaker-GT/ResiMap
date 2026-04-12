@@ -1,4 +1,4 @@
-.GYM-pin {
+.salon-pin {
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -9,24 +9,24 @@
 }
 
 /* Hover */
-.GYM-pin:hover {
+.salon-pin:hover {
   transform: scale(1.15);
 }
 
 /* Zoom lejos */
-.GYM-pin.zoom-far {
+.salon-pin.zoom-far {
   opacity: 0.0;
   transform: scale(0.85);
 }
 
 /* Zoom medio */
-.GYM-pin.zoom-mid {
+.salon-pin.zoom-mid {
   opacity: 0.7;
   transform: scale(0.95);
 }
 
 /* Zoom cerca */
-.GYM-pin.zoom-near {
+.salon-pin.zoom-near {
   opacity: 1;
   transform: scale(1);
 }
@@ -45,26 +45,26 @@
 }
 
 /* Card principal */
-.GYM-popup {
+.salon-popup {
   padding: 18px;
   font-family: 'Segoe UI', sans-serif;
 }
 
 /* Header */
-.GYM-popup-header {
+.salon-popup-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 15px;
 }
 
-.GYM-popup-header h3 {
+.salon-popup-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
 }
 
-.GYM-popup-header span {
+.salon-popup-header span {
   font-size: 12px;
   color: #6b7280;
 }
@@ -101,12 +101,38 @@
   box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
 }
 
-/* IMAGENES/ 
-/* =========================
-   CARRUSEL GYM
-   ========================= */
+/* Contenedor de imagen -------------------------------- */
+.salon-img-container {
+  width: 100%;
+  height: 140px; /* puedes ajustar */
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
 
-.gym-carousel {
+.salon-img-container {
+  aspect-ratio: 16/9;
+  height: auto;
+}
+
+/* Imagen responsive perfecta */
+.salon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 🔥 CLAVE */
+  display: block;
+}
+
+.salon-img {
+  transition: transform 0.3s ease;
+}
+
+.salon-img-container:hover .salon-img {
+  transform: scale(1.05);
+}
+
+/* Contenedor */
+.salon-carousel {
   position: relative;
   width: 100%;
   height: 140px;
@@ -115,13 +141,15 @@
   margin-bottom: 12px;
 }
 
-.gym-slides {
+/* Slides */
+.salon-slides {
   width: 100%;
   height: 100%;
   position: relative;
 }
 
-.gym-slide {
+/* Cada imagen */
+.salon-slide {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -130,13 +158,14 @@
   transition: opacity 0.4s ease;
 }
 
-.gym-slide.active {
+/* Imagen activa */
+.salon-slide.active {
   opacity: 1;
 }
 
 /* Botones */
-.gym-prev,
-.gym-next {
+.salon-prev,
+.salon-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -149,15 +178,18 @@
   border-radius: 8px;
 }
 
-.gym-prev { left: 8px; }
-.gym-next { right: 8px; }
+/* Posiciones */
+.salon-prev { left: 8px; }
+.salon-next { right: 8px; }
 
-.gym-prev:hover,
-.gym-next:hover {
+/* Hover */
+.salon-prev:hover,
+.salon-next:hover {
   background: rgba(0,0,0,0.6);
 }
+
 @media (max-width: 480px) {
-  .gym-carousel {
+  .salon-carousel {
     height: 110px;
   }
 }

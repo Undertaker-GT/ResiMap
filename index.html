@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="CSS/piscina.css">
   <link rel="stylesheet" href="CSS/centro_educativo.css">
   <link rel="stylesheet" href="CSS/GYM.css">
+  <link rel="stylesheet" href="CSS/salon.css">
+  <link rel="stylesheet" href="CSS/centro_comercial.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -181,6 +183,21 @@
     <!-- Las opciones se cargarán dinámicamente -->
   </select>
 
+  <div id="centroModal" class="sector-modal">
+
+    <div class="sector-modal-content">
+
+      <div class="sector-modal-header">
+        <h3 id="centroTitulo">Centro Comercial</h3>
+        <button onclick="cerrarModalCentro()">×</button>
+      </div>
+
+      <div id="listaComercios"></div>
+
+    </div>
+
+  </div>
+
   
   <div id="destinoToast" class="destino-toast">Has llegado a tu destino</div>
 
@@ -195,6 +212,8 @@
   <script src="JS/piscina.js"></script>
   <script src="JS/centro_educativo.js"></script>
   <SCript src="JS/GYM.js"></SCript>
+  <script src="JS/salon.js"></script>
+  <script src="JS/centro_comercial.js"></script>
   
 </body>
 </html>

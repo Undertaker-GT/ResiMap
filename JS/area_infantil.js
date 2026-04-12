@@ -98,6 +98,19 @@ function activarAreaInfantil(area) {
     activeGYMPolygon = null;
   }
 
+  if (activeSALONPolygon) {
+    map.removeLayer(activeSALONPolygon);
+    activeSALONPolygon = null;
+  }
+
+  if(activeCentroPolygon){
+    map.removeLayer(activeCentroPolygon);
+    activeCentroPolygon = null;
+  }
+  
+
+
+
   // 🔥 Crear nuevo polígono
   activeAreaInfantilPolygon = L.polygon(area.area, {
     color: "#FFD700",

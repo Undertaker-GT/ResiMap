@@ -1,32 +1,39 @@
-.centro-deportivo-pin {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
+.comercio-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+.comercio-item button{
+background:#2563eb;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
 }
 
 /* Hover */
-.centro-deportivo-pin:hover {
+.centro-pin:hover {
   transform: scale(1.15);
 }
 
 /* Zoom lejos */
-.centro-deportivo-pin.zoom-far {
+.centro-pin.zoom-far {
   opacity: 0.0;
   transform: scale(0.85);
 }
 
 /* Zoom medio */
-.centro-deportivo-pin.zoom-mid {
+.centro-pin.zoom-mid {
   opacity: 0.7;
   transform: scale(0.95);
 }
 
 /* Zoom cerca */
-.centro-deportivo-pin.zoom-near {
+.centro-pin.zoom-near {
   opacity: 1;
   transform: scale(1);
 }
@@ -101,63 +108,74 @@
   box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
 }
 
-/* =========================
-   CARRUSEL CENTRO DEPORTIVO
-   ========================= */
-
-.centro-carousel {
-  position: relative;
-  width: 100%;
-  height: 140px;
-  overflow: hidden;
-  border-radius: 16px;
-  margin-bottom: 12px;
+#listaComercios{
+display:flex;
+flex-direction:column;
+gap:15px;
+padding:10px;
 }
 
-.centro-slides {
-  width: 100%;
-  height: 100%;
-  position: relative;
+.comercio-card{
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+display:flex;
+flex-direction:column;
 }
 
-.centro-slide {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+.comercio-carousel{
+display:flex;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
 }
 
-.centro-slide.active {
-  opacity: 1;
+.comercio-carousel img{
+width:100%;
+height:180px;
+object-fit:cover;
+scroll-snap-align:start;
 }
 
-/* Botones */
-.centro-prev,
-.centro-next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.4);
-  border: none;
-  color: white;
-  font-size: 18px;
-  padding: 6px 10px;
-  cursor: pointer;
-  border-radius: 8px;
+.comercio-info{
+padding:12px;
 }
 
-.centro-prev { left: 8px; }
-.centro-next { right: 8px; }
-
-.centro-prev:hover,
-.centro-next:hover {
-  background: rgba(0,0,0,0.6);
+.comercio-info h4{
+margin:0 0 8px 0;
+font-size:16px;
 }
 
-@media (max-width: 480px) {
-  .centro-carousel {
-    height: 110px;
-  }
+.comercio-datos{
+display:flex;
+flex-direction:column;
+gap:5px;
+font-size:14px;
+color:#555;
+margin-bottom:10px;
+}
+
+.comercio-datos i{
+margin-right:5px;
+color:#2563eb;
+}
+
+.comercio-info button{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px;
+border-radius:8px;
+cursor:pointer;
+width:100%;
+font-weight:600;
+}
+
+.comercio-info button:hover{
+background:#1d4ed8;
+}
+
+#centroModal .sector-modal-content{
+max-height:85vh;
+overflow-y:auto;
 }

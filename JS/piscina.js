@@ -70,6 +70,19 @@ function activarpiscina(area) {
     activeGYMPolygon = null;
   }
 
+  if (activeSALONPolygon) {
+    map.removeLayer(activeSALONPolygon);
+    activeSALONPolygon = null;
+  }
+
+  if(activeCentroPolygon){
+    map.removeLayer(activeCentroPolygon);
+    activeCentroPolygon = null;
+  }
+  
+
+
+
   // 🔥 Crear nuevo polígono
   activepiscinaPolygon = L.polygon(area.area, {
     color: "#1E90FF", 

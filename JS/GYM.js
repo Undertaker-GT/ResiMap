@@ -11,6 +11,10 @@ const GYM = {
       id: "GYM_principal",
       nombre: "GYM",
 
+    fotos:[
+      "image/areas-recreativas/GYM/GYM.jpeg"
+    ],    
+
       // 🔵 Centro real (para rutas)
       coords: [14.413295274293192, -90.68408720899853],
 
@@ -62,6 +66,18 @@ function activarGYM(area) {
     map.removeLayer(activecolegioPolygon);
     activecolegioPolygon = null;
   }
+
+  if (activeSALONPolygon) {
+    map.removeLayer(activeSALONPolygon);
+    activeSALONPolygon = null;
+  }
+
+  if(activeCentroPolygon){
+    map.removeLayer(activeCentroPolygon);
+    activeCentroPolygon = null;
+  }
+  
+
 
   // 🔥 Crear nuevo polígono
   activeGYMPolygon = L.polygon(area.area, {
@@ -117,8 +133,27 @@ Object.keys(GYM).forEach(tipoArea => {
 
 function mostrarPopupGYM(area) {
 
+  const fotos = (area.fotos && area.fotos.length > 0)
+    ? area.fotos
+    : ["/image/default.jpg"];
+
+  const slides = fotos.map((foto, index) => `
+    <img src="${foto}" class="gym-slide ${index === 0 ? 'active' : ''}">
+  `).join("");
+
   const contenido = `
     <div class="GYM-popup">
+
+      <div class="gym-carousel">
+        <div class="gym-slides">
+          ${slides}
+        </div>
+
+        ${fotos.length > 1 ? `
+          <button class="gym-prev" onclick="moverSlideGYM(-1)">❮</button>
+          <button class="gym-next" onclick="moverSlideGYM(1)">❯</button>
+        ` : ""}
+      </div>
       
       <div class="GYM-popup-header">
         <div class="centro-icon">🏋️‍♂️</div>
@@ -130,7 +165,6 @@ function mostrarPopupGYM(area) {
 
       <button class="centro-btn"
         onclick="trazarRutaGYM('${area.id}')">
-        <i class="fas fa-route"></i>
         Trazar ruta
       </button>
 
@@ -145,6 +179,30 @@ function mostrarPopupGYM(area) {
     .setLatLng(area.coords)
     .setContent(contenido)
     .openOn(map);
+
+  currentGymSlide = 0;
+}
+
+let currentGymSlide = 0;
+
+function moverSlideGYM(direccion) {
+  const slides = document.querySelectorAll(".gym-slide");
+
+  if (slides.length === 0) return;
+
+  slides[currentGymSlide].classList.remove("active");
+
+  currentGymSlide += direccion;
+
+  if (currentGymSlide < 0) {
+    currentGymSlide = slides.length - 1;
+  }
+
+  if (currentGymSlide >= slides.length) {
+    currentGymSlide = 0;
+  }
+
+  slides[currentGymSlide].classList.add("active");
 }
 
 

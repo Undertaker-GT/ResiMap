@@ -1,36 +1,34 @@
 // =============================
-// COLEGIO
+// salon
 // =============================
 
-let activecolegioPolygon = null;
+let activeSALONPolygon = null;
 
 
-const colegio = {
-  colegio: [
+
+
+const salon = {
+  salon: [
     {
-      id: "colegio_principal",
-      nombre: "colegio ISK",
+      id: "salon_principal",
+      nombre: "salon",
       fotos:[
-        "image/areas-recreativas/Colegio/colegio.png"
+        "image/areas-recreativas/Salon/salon1.jpeg",
+        "image/areas-recreativas/Salon/salon2.jpeg"
       ],
 
       // 🔵 Centro real (para rutas)
-      coords: [14.413002376957364, -90.68435189234165],
+      coords: [14.413256962182045, -90.68276267501264],
 
       // 🟠 Posición visual del emoji
-      iconCoords: [14.41291340259545, -90.68404746162592],
+      iconCoords: [14.413290733423848, -90.68290751429399],
 
       area: [
-        [14.41289217313855, -90.68445452996644],
-        [14.413253182790392, -90.6841219765463],
-        [14.413171444807213, -90.68405667149399],
-        [14.413181175521062, -90.68402854008686],
-        [14.41314030652001, -90.68399839929349],
-        [14.413023537903603, -90.683881854868],
-        [14.413125710445675, -90.68374823068406],
-        [14.4128639540299, -90.68353222166493],
-        [14.412586628116463, -90.6841541267093],
-        [14.41289217313855, -90.68445452996644]
+        [14.413384173619766, -90.68316704622568],
+        [14.413344557371417, -90.68277745538094],
+        [14.413201029593033, -90.68280494802234],
+        [14.413254284254617, -90.68318984500145],
+        [14.413384173619766, -90.68316704622568]
       ]
     }
   ]
@@ -38,7 +36,7 @@ const colegio = {
 };
 
 
-function activarcolegio(area) {
+function activarSalon(area) {
 
   // 🔥 Quitar polígono anterior
   if (activeSectorPolygon) {
@@ -46,9 +44,14 @@ function activarcolegio(area) {
     activeSectorPolygon = null;
   }
 
-  if (activecolegioPolygon) {
-    map.removeLayer(activecolegioPolygon);
-    activecolegioPolygon = null;
+  if (activeGYMPolygon) {
+    map.removeLayer(activeGYMPolygon);
+    activeGYMPolygon = null;
+  }
+
+  if (activeSALONPolygon) {
+    map.removeLayer(activeSALONPolygon);
+    activeSALONPolygon = null;
   }
 
   if (activeCentroDeportivoPolygon) {
@@ -66,14 +69,9 @@ function activarcolegio(area) {
     activepiscinaPolygon = null;
   }
 
-   if (activeGYMPolygon) {
-    map.removeLayer(activeGYMPolygon);
-    activeGYMPolygon = null;
-  }
-
-  if (activeSALONPolygon) {
-    map.removeLayer(activeSALONPolygon);
-    activeSALONPolygon = null;
+  if (activecolegioPolygon) {
+    map.removeLayer(activecolegioPolygon);
+    activecolegioPolygon = null;
   }
 
   if(activeCentroPolygon){
@@ -84,22 +82,22 @@ function activarcolegio(area) {
 
 
   // 🔥 Crear nuevo polígono
-  activecolegioPolygon = L.polygon(area.area, {
-    color: "#3B5998", 
+  activeSALONPolygon = L.polygon(area.area, {
+    color: "#FF4500", 
     weight: 2,
-    fillColor: "#3B5998",
+    fillColor: "#FF4500",
     fillOpacity: 0.35,
     interactive: false
   }).addTo(map);
 
-  map.fitBounds(activecolegioPolygon.getBounds());
+  map.fitBounds(activeSALONPolygon.getBounds());
 }
 
-function crearIconocolegio(id, emoji) {
+function crearIconoSalon(id, emoji) {
   return L.divIcon({
-    className: "colegio-market",
+    className: "salon-market",
     html: `
-      <div class="colegio-pin" id="colegio-pin-${id}">
+      <div class="salon-pin" id="salon-pin-${id}">
         ${emoji}
       </div>
     `,
@@ -109,66 +107,64 @@ function crearIconocolegio(id, emoji) {
 }
 
 // =============================
-// CREAR MARCADORES colegio
+// CREAR MARCADORES salon
 // =============================
 
-const colegioMarkers = [];
+const salonMarkets = [];
 
-Object.keys(colegio).forEach(tipoArea => {
+Object.keys(salon).forEach(tipoArea => {
 
-  let emoji = "🏫";
+  let emoji = "🏡";
 
-  colegio[tipoArea].forEach(area => {
+  salon[tipoArea].forEach(area => {
 
     const marker = L.marker(area.iconCoords || area.coords, {
-      icon: crearIconocolegio(area.id, emoji)
+      icon: crearIconoSalon(area.id, emoji)
     }).addTo(map);
 
     marker.on("click", () => {
-      activarcolegio(area);
-      mostrarPopupcolegio(area);
+      activarSalon(area);
+      mostrarPopupSalon(area);
     });
 
-    colegioMarkers.push(marker);
+    salonMarkets.push(marker);
 
   });
 
 });
 
-function mostrarPopupcolegio(area) {  
+function mostrarPopupSalon(area) {
 
-  const fotos = (area.fotos && area.fotos.length > 0)
-    ? area.fotos
-    : ["/image/default.jpg"];
+  const fotos = area.fotos || [];
 
   const slides = fotos.map((foto, index) => `
-    <img src="${foto}" class="colegio-slide ${index === 0 ? 'active' : ''}">
+    <img src="${foto}" class="salon-slide ${index === 0 ? 'active' : ''}">
   `).join("");
 
   const contenido = `
-    <div class="colegio-popup">
+    <div class="salon-popup">
 
-      <div class="colegio-carousel">
-        <div class="colegio-slides">
+      <div class="salon-carousel">
+        <div class="salon-slides">
           ${slides}
         </div>
 
         ${fotos.length > 1 ? `
-          <button class="colegio-prev" onclick="moverSlideColegio(-1)">❮</button>
-          <button class="colegio-next" onclick="moverSlideColegio(1)">❯</button>
+          <button class="salon-prev" onclick="moverSlide(-1)">❮</button>
+          <button class="salon-next" onclick="moverSlide(1)">❯</button>
         ` : ""}
       </div>
       
-      <div class="colegio-popup-header">
-        <div class="centro-icon">🏫</div>
+      <div class="salon-popup-header">
+        <div class="centro-icon">🏡</div>
         <div>
           <h3>${area.nombre}</h3>
-          <span>Institución educativa</span>
+          <span>Zona de Eventos</span>
         </div>
       </div>
 
       <button class="centro-btn"
-        onclick="trazarRutacolegio('${area.id}')">
+        onclick="trazarRutaSalon('${area.id}')">
         Trazar ruta
       </button>
 
@@ -184,33 +180,33 @@ function mostrarPopupcolegio(area) {
     .setContent(contenido)
     .openOn(map);
 
-  currentColegioSlide = 0;
+  currentSlideIndex = 0; // reset
 }
 
-let currentColegioSlide = 0;
+let currentSlideIndex = 0;
 
-function moverSlideColegio(direccion) {
-  const slides = document.querySelectorAll(".colegio-slide");
+function moverSlide(direccion) {
+  const slides = document.querySelectorAll(".salon-slide");
 
   if (slides.length === 0) return;
 
-  slides[currentColegioSlide].classList.remove("active");
+  slides[currentSlideIndex].classList.remove("active");
 
-  currentColegioSlide += direccion;
+  currentSlideIndex += direccion;
 
-  if (currentColegioSlide < 0) {
-    currentColegioSlide = slides.length - 1;
+  if (currentSlideIndex < 0) {
+    currentSlideIndex = slides.length - 1;
   }
 
-  if (currentColegioSlide >= slides.length) {
-    currentColegioSlide = 0;
+  if (currentSlideIndex >= slides.length) {
+    currentSlideIndex = 0;
   }
 
-  slides[currentColegioSlide].classList.add("active");
+  slides[currentSlideIndex].classList.add("active");
 }
 
 
-function trazarRutacolegio(idarea) {
+function trazarRutaSalon(idarea) {
 
   if (!userLocation) {
     alert("Esperando ubicación actual...");
@@ -219,8 +215,8 @@ function trazarRutacolegio(idarea) {
 
   let areaSeleccionada = null;
 
-Object.keys(colegio).forEach(tipo => {
-  colegio[tipo].forEach(c => {
+Object.keys(salon).forEach(tipo => {
+  salon[tipo].forEach(c => {
     if (c.id === idarea) {
       areaSeleccionada = c;
     }
@@ -258,9 +254,9 @@ Object.keys(colegio).forEach(tipo => {
 function actualizarEstiloPinesPorZoom() {
   const zoom = map.getZoom();
 
- Object.keys(colegio).forEach(tipo => {
-  colegio[tipo].forEach(area => {
-    const pin = document.getElementById(`colegio-pin-${area.id}`);
+ Object.keys(salon).forEach(tipo => {
+  salon[tipo].forEach(area => {
+    const pin = document.getElementById(`salon-pin-${area.id}`);
     if (!pin) return;
 
     pin.classList.remove("zoom-far", "zoom-mid", "zoom-near");
