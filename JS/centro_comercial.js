@@ -26,7 +26,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/comidaCoreana2.jpeg"
+            "image/centro-comercial/Plaza-Principal/comidaCoreana2."
         ]
       },                
       {
@@ -35,7 +35,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/Panaderia Pedro.jpeg"
+            "image/centro-comercial/Plaza-Principal/Panaderia Pedro.g"
         ]
       },
       {
@@ -54,7 +54,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/libreria.jpeg",
+            "image/centro-comercial/Plaza-Principal/libreria.g",
         ]
       },
       {
@@ -63,7 +63,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/libreria.jpeg",
+            "image/centro-comercial/Plaza-Principal/libreria.g",
         ]
       },
       {
@@ -72,7 +72,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/libreria.jpeg",
+            "image/centro-comercial/Plaza-Principal/libreria.g",
         ]
       },
       {
@@ -81,7 +81,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-            "image/centro-comercial/Plaza-Principal/libreria.jpeg",
+            "image/centro-comercial/Plaza-Principal/libreria.g",
         ]
       }       
 
@@ -105,7 +105,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Tienda.jpeg"
+          "image/centro-comercial/Mini-plaza/Tienda.g"
         ]
       },
       {
@@ -114,7 +114,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Veterinaria.jpeg"
+          "image/centro-comercial/Mini-plaza/Veterinaria.g"
         ]
       },
       {
@@ -123,7 +123,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Pupuseria.jpeg"
+          "image/centro-comercial/Mini-plaza/Pupuseria.g"
         ]
       }
     ]
@@ -146,7 +146,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Tienda.jpeg"
+          "image/centro-comercial/Mini-plaza/Tienda.g"
         ]
       },
       {
@@ -155,7 +155,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Veterinaria.jpeg"
+          "image/centro-comercial/Mini-plaza/Veterinaria.g"
         ]
       },
       {
@@ -164,7 +164,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Pupuseria.jpeg"
+          "image/centro-comercial/Mini-plaza/Pupuseria.g"
         ]
       }
     ]
@@ -188,7 +188,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Tienda.jpeg"
+          "image/tienda.jpg"
         ]
       },
       {
@@ -197,7 +197,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Veterinaria.jpeg"
+          "image/tienda.jpg"
         ]
       },
       {
@@ -206,7 +206,7 @@ const centrosComerciales = {
         telefono: "5555-1234",
         horario: "8:00 AM - 9:00 PM",
         fotos: [
-          "image/centro-comercial/Mini-plaza/Pupuseria.jpeg"
+          "image/centro-comercial/Mini-plaza/Pupuseria.g"
         ]
       }
     ]
